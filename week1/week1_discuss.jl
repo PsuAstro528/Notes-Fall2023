@@ -282,13 +282,13 @@ end
 md"## Performance vs Precision"
 
 # ╔═╡ 77a00d38-e61a-4825-9bc3-ef0ce0cdff2a
-roundoff_error_test; @benchmark roundoff_error_test(100,unit=Float32(1/17))
+@benchmark $roundoff_error_test(100,unit=Float32(1/17))
 
 # ╔═╡ 9d3c906e-5153-4ead-b405-01db7c039471
-roundoff_error_test; @benchmark roundoff_error_test(100,unit=Float64(1/17))
+@benchmark $roundoff_error_test(100,unit=Float64(1/17))
 
 # ╔═╡ d7170965-0171-4662-8eab-7d856895d4b5
-roundoff_error_test; @benchmark roundoff_error_test(100,unit=Double64(1/17))
+@benchmark $(roundoff_error_test)(100,unit=Double64(1/17))
 
 # ╔═╡ 5362f60b-1b2c-400f-9205-c750e6fa8d47
 md"""
