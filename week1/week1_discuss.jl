@@ -282,13 +282,13 @@ end
 md"## Performance vs Precision"
 
 # ╔═╡ 77a00d38-e61a-4825-9bc3-ef0ce0cdff2a
-@benchmark roundoff_error_test(100,unit=Float32(1/17))
+roundoff_error_test; @benchmark roundoff_error_test(100,unit=Float32(1/17))
 
 # ╔═╡ 9d3c906e-5153-4ead-b405-01db7c039471
-@benchmark roundoff_error_test(100,unit=Float64(1/17))
+roundoff_error_test; @benchmark roundoff_error_test(100,unit=Float64(1/17))
 
 # ╔═╡ d7170965-0171-4662-8eab-7d856895d4b5
-@benchmark roundoff_error_test(100,unit=Double64(1/17))
+roundoff_error_test; @benchmark roundoff_error_test(100,unit=Double64(1/17))
 
 # ╔═╡ 5362f60b-1b2c-400f-9205-c750e6fa8d47
 md"""
@@ -1491,7 +1491,7 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═0b431bf7-1f57-40c4-ad0c-012cbdbf9528
+# ╟─0b431bf7-1f57-40c4-ad0c-012cbdbf9528
 # ╟─080d3a94-161e-4482-9cf4-b82ffb98d0ed
 # ╟─a21b553b-eecb-4105-a0ed-d936e500788b
 # ╟─afe9b7c1-d031-4e1f-bd5b-5aeed30d7048
