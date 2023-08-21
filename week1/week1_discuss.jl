@@ -14,6 +14,9 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ 6d3acd2f-0854-49bf-807a-2b10d00b804d
+using LogarithmicNumbers
+
 # ╔═╡ 143d4954-6710-4702-9a8b-fb83154476b2
 using DoubleFloats
 
@@ -37,7 +40,7 @@ md"ToC on side $(@bind toc_aside CheckBox(;default=true))"
 TableOfContents(aside=toc_aside)
 
 # ╔═╡ 0b4ae83b-290e-46f5-854d-01db4c754187
-md""""
+md"""
 ## Setup Accounts
 - Congrats to most of you who already got your Roar Collab account.
 - If you don't have one yet, please request one today, so it'll be ready by Wednesday.
@@ -61,7 +64,8 @@ md"""
 md"""
 ## Introductions
 - Eric Ford, Professor
-- Justin Pettuic, ICDS RISE Team member:  Can help with class-specific issues on Roar
+- Kadri Mohamad Nizam, TA:  Will help during labs
+- Justin Pettuci, ICDS RISE Team member:  Can help with class-specific issues on Roar
 """
 
 # ╔═╡ 17afed3c-4f28-424d-9758-a483fa1de279
@@ -172,6 +176,18 @@ p(A | B) = \frac{p(A, B)}{p(B)} = \frac{p(A) p(B | A)}{p(B)}
 
 """)
 
+# ╔═╡ fed5c970-9ba4-4acb-b2ae-223ee40792b3
+md"""
+Package [LogarithmicNumbers.jl](https://github.com/cjdoris/LogarithmicNumbers.jl) can help.
+"""
+
+# ╔═╡ f81e772f-00b6-4c61-b7a3-de6f96ca7c83
+let
+	a = exp(Logarithmic,-746)
+	b = exp(Logarithmic,-747)
+	c = a/b
+end
+
 # ╔═╡ a1458625-5545-4433-97e1-d41a1790ad7f
 md"## Example 3: Round-off Error"
 
@@ -215,9 +231,9 @@ end;
 begin
 	local plt = plot(legend=:topleft,xscale=:log10)
 	scatter!(n_list,log10.(abs.(errs_float32)), markercolor=:blue, label="Float32")
-	plot!(n_list,log10.(abs.(errs_float32)), linecolor=:blue, label="Float32")
+	plot!(n_list,log10.(abs.(errs_float32)), linecolor=:blue, label=:none)
 	scatter!(n_list,log10.(abs.(errs_float64)), markercolor=:green, label="Float64")
-	plot!(n_list,log10.(abs.(errs_float64)), linecolor=:green, label="Float64")
+	plot!(n_list,log10.(abs.(errs_float64)), linecolor=:green, label=:none)
 	xlabel!(L"$n$")
 	ylabel!(L"$log_{10} \left|\mathrm{Error}\right|$")
 	title!(LaTeXString("\$d = " * string(denom) * "\$"))
@@ -226,6 +242,9 @@ end
 
 # ╔═╡ 14ec952c-696c-44f7-957a-57f540c4a56f
 md"#### Why would you add so many numbers?"
+
+# ╔═╡ e3888187-4170-443f-92a5-4a9d87863bc8
+BigFloat
 
 # ╔═╡ 992c6ab6-9bb3-4fa4-ba56-9525fb8c6710
 md"""## Extended Precission
@@ -319,6 +338,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 DoubleFloats = "497a8b3b-efae-58df-a0af-a86822472b78"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LogarithmicNumbers = "aa2f6b4e-9042-5d33-9679-40d3a6b85899"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -327,6 +347,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 BenchmarkTools = "~1.3.2"
 DoubleFloats = "~1.2.4"
 LaTeXStrings = "~1.3.0"
+LogarithmicNumbers = "~1.2.1"
 Plots = "~1.38.17"
 PlutoTeachingTools = "~0.2.13"
 PlutoUI = "~0.7.52"
@@ -338,7 +359,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "ed890df14285cadb4571d9c997c392b49878900c"
+project_hash = "b456a1d385f2e276cfe31a41a306586a6990406b"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -792,6 +813,12 @@ version = "0.3.25"
     ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
     ChangesOfVariables = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
     InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
+
+[[deps.LogarithmicNumbers]]
+deps = ["Random"]
+git-tree-sha1 = "8522befb54ff3b4bcf17d57b14b884d536a22015"
+uuid = "aa2f6b4e-9042-5d33-9679-40d3a6b85899"
+version = "1.2.1"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -1464,11 +1491,11 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─0b431bf7-1f57-40c4-ad0c-012cbdbf9528
+# ╠═0b431bf7-1f57-40c4-ad0c-012cbdbf9528
 # ╟─080d3a94-161e-4482-9cf4-b82ffb98d0ed
 # ╟─a21b553b-eecb-4105-a0ed-d936e500788b
 # ╟─afe9b7c1-d031-4e1f-bd5b-5aeed30d7048
-# ╠═0b4ae83b-290e-46f5-854d-01db4c754187
+# ╟─0b4ae83b-290e-46f5-854d-01db4c754187
 # ╟─959f2c12-287c-4648-a585-0c11d0db812d
 # ╟─b4c65258-452d-4d09-b040-dfbde3d4baab
 # ╟─17afed3c-4f28-424d-9758-a483fa1de279
@@ -1487,6 +1514,9 @@ version = "1.4.1+0"
 # ╟─a41741e6-039d-4a80-a9f0-10f447589880
 # ╟─379aa32c-7914-4da5-a2d4-201a0acf2115
 # ╟─98d31fcb-232f-4313-a17f-270dfc56d50e
+# ╟─fed5c970-9ba4-4acb-b2ae-223ee40792b3
+# ╠═6d3acd2f-0854-49bf-807a-2b10d00b804d
+# ╠═f81e772f-00b6-4c61-b7a3-de6f96ca7c83
 # ╟─a1458625-5545-4433-97e1-d41a1790ad7f
 # ╟─3d576e8d-2100-403d-a295-62a1ca92728a
 # ╠═6e1ddb6a-9403-41db-8b7f-c53a1d744548
@@ -1498,6 +1528,7 @@ version = "1.4.1+0"
 # ╟─4a2908b0-be48-4968-a5ee-2cf0229c0764
 # ╟─575fd9df-91ab-4152-bdc8-52ade89eeef1
 # ╟─14ec952c-696c-44f7-957a-57f540c4a56f
+# ╠═e3888187-4170-443f-92a5-4a9d87863bc8
 # ╟─992c6ab6-9bb3-4fa4-ba56-9525fb8c6710
 # ╠═143d4954-6710-4702-9a8b-fb83154476b2
 # ╠═dd3a260e-e949-44d1-8fa9-5f2b2ce74400
