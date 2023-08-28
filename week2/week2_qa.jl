@@ -114,21 +114,37 @@ $$I_{M,1} = f\left(\frac{a+b}{2}\right)(b-a)$$
 $$I_{M,n} = \sum_{i=1}^n f\left(\frac{x_{i-1}+x_i}{2}\right)\Delta x,$$ 
 where $x_i = a + i \Delta x$ and $\Delta x = (b-a)/n$
 
+
 → *A priori* Error bound:
 
-$$\left|I - I_{M,n} \right| \le \frac{(b-a)^3}{24n^2} f''(c),$$
-where $c = \mathrm{argmax}_c( f''(c) )$ 
+$$f(x) \simeq f(x) + \epsilon f'(x) + \epsilon^2 \frac{f''(x)}{2} + ...$$
+
+$$\left|I - I_{M,n} \right| \le \frac{(b-a)\Delta x^2}{24} f''(c) = \frac{(b-a)^3}{24n^2} f''(c),$$
+where $c = \mathrm{argmax}_c( f''(c) )$ and some conditions of $f(x)$. 
 """
 
 # ╔═╡ 21494e02-872f-48a1-ba01-3ac6c35c79a5
 blockquote(md"""
-How do we know when it is appropriate to obtain an "a priori" error estimate as opposed to an "a posteriori" estimate? What is a typical example of each in an astronomical context?
+What are examples of *a priori* and *a posteriori* estimates in astronomical context?
 """)
 
 # ╔═╡ 12fabb9c-5302-42d2-bf18-90d8f4e71fb1
 md"""
-- *A priori*:  See above
-- *A posteriori*:  Comparing results from Adaptive mesh refinement
+- *A priori*:  Integration (e.g., see above), ODEs
+- *A posteriori*:  More common for PDEs. E.g., Comparing results from adaptive mesh refinement
+
+"""
+
+# ╔═╡ 48b71e6f-349d-4f64-8d59-8b128d99929d
+blockquote(md"""
+How do we know when it is appropriate to obtain an *a priori* error estimate as opposed to an "a posteriori" estimate?
+""")
+
+# ╔═╡ 40781b8a-142b-4ba1-9535-90597c395498
+md"""
+- *a priori* error estimates are typically easier to derive analytically.  They usually involve significant assumptions.  If you know all the assumptions are met, then should be good enough.
+- Formal *a posteriori* estimates are hard and not that common in astrophysics.    
+- Informal estimates based on comparing multiple analyses are often easier (but sometime time consuming, particularly if don't reuse function evaluations). 
 """
 
 # ╔═╡ 06594327-f428-4a79-b338-4bbb28edc326
@@ -199,6 +215,16 @@ md"""
 Notation doesn't help you create an algorithm.  
 It's typically used to help you choose between existing algorithms.
 Make sure you're counting what matters (more on this later.)
+"""
+
+# ╔═╡ 6c0cc413-af1f-4a37-8a99-51ca810596b7
+blockquote(md"""
+Can we say that finite element methods are the discrete version of the methods used to study fluids?
+""")
+
+# ╔═╡ c2e0d547-409c-4025-a002-f6f5f9b68515
+md"""
+The typical analogy for finite element simulations is that every particle is attached to its neighbors with a spring.   
 """
 
 # ╔═╡ 1f31759c-47ff-4b2e-902e-bba94051940c
@@ -667,6 +693,8 @@ version = "17.4.0+0"
 # ╟─9e9b227c-f74c-4734-af5b-99d087401155
 # ╟─21494e02-872f-48a1-ba01-3ac6c35c79a5
 # ╟─12fabb9c-5302-42d2-bf18-90d8f4e71fb1
+# ╟─48b71e6f-349d-4f64-8d59-8b128d99929d
+# ╟─40781b8a-142b-4ba1-9535-90597c395498
 # ╟─06594327-f428-4a79-b338-4bbb28edc326
 # ╟─e124daaf-b878-442f-99f2-776b6995dc24
 # ╠═0df5450d-9241-47f4-aeb4-099855a5ce1f
@@ -678,6 +706,8 @@ version = "17.4.0+0"
 # ╟─95a1bbdb-61b5-4dbf-9eca-574620327113
 # ╟─6d494233-cdd9-4fb1-b824-0d3c0fe83847
 # ╟─5f583a12-3d83-4e91-8f8e-097765f76f58
+# ╟─6c0cc413-af1f-4a37-8a99-51ca810596b7
+# ╟─c2e0d547-409c-4025-a002-f6f5f9b68515
 # ╟─1f31759c-47ff-4b2e-902e-bba94051940c
 # ╟─e6601dca-2f0d-4b90-a9e9-d627e0bdee81
 # ╟─3e0fd5d6-4d44-4c15-af85-979f758343e9
