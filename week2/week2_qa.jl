@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -64,6 +64,27 @@ md"""
 ## Terminoilogy
 """
 
+# ╔═╡ 4a3a7167-41f6-4b66-a833-4e62f1761446
+md"""
+## Agile Development
+"""
+
+# ╔═╡ 38bbdb0c-9ec2-46f0-985a-cb8b1929d515
+blockquote(md"""
+Can you give some examples of effective "agile development" methods?
+""")
+
+# ╔═╡ e257f61c-3eae-4f60-a7e6-c57d6000a435
+md"""
+Example **Agile development** process:
+- Prepration:  Make a list of all the features you'd like ("product backlog")
+- Sprint Planning:  Which features will be addressed next? ("sprint backlog")
+  This can include tests and documentation, not just new features.
+- Sprint:  Implement tasks from spring backlog.  Add any new issues to the product backlog.
+- Review:  Present new features and get feedback from "customer".  
+- Retrospective:  What worked?  What didn't work?  Aim to make next spring more effective.
+"""
+
 # ╔═╡ 6f1964d8-0d7b-4a32-a0a6-eb53c37f76c7
 blockquote(md"""
 How are "a priori"/ "a posteriori" distinct from "preconditions"/ "postconditions"?
@@ -73,23 +94,6 @@ How are "a priori"/ "a posteriori" distinct from "preconditions"/ "postcondition
 md"""
 - Pre/Post-conditions refer to statements that should be true at beginning/end of your function.
 - Here *a priori/posterior* was to distinguish how error estaimtes are made. 
-"""
-
-# ╔═╡ 48fb5bae-9227-49e9-aacd-006e8cb6d74f
-md"""
-## Conditions
-"""
-
-# ╔═╡ 70d0decb-de58-4b1a-b31c-2230a9447a9a
-blockquote(md"""
-How do you decide how many conditions to introduce into coding without, (1) it not being general enough to use for another project, (2) without going overboard?
-""")
-
-# ╔═╡ 1dfb44d6-f77c-4305-97cd-2d71bdd6ef14
-md"""
-What are you assuming when you write the function?  
-
-Why not document that?
 """
 
 # ╔═╡ 2e9f3b0d-d4ff-496b-9eb6-633deb4be4e6
@@ -125,44 +129,6 @@ How do we know when it is appropriate to obtain an "a priori" error estimate as 
 md"""
 - *A priori*:  See above
 - *A posteriori*:  Comparing results from Adaptive mesh refinement
-"""
-
-# ╔═╡ 960357ef-3a9c-4397-b9cf-351925ee64e2
-md"""
-## Testing
-"""
-
-# ╔═╡ a07ab5af-23ca-4ecd-9304-3a1f14fe56bc
-blockquote(md"""
-When should we use "unit tests", "integration tests", or "regression tests"?
-""")
-
-# ╔═╡ ca249c00-db7e-416e-b511-644b4ef0de81
-md"""
-- Unit tests: Nearly always 
-- Integration tests:  At a minimum, when you combine two codes/libraries that weren't intended to be combined.
-- Regression tests:  When you have an accurate answer to compare to (and it's not computationally impractical)
-"""
-
-# ╔═╡ 4a3a7167-41f6-4b66-a833-4e62f1761446
-md"""
-## Agile Development
-"""
-
-# ╔═╡ 38bbdb0c-9ec2-46f0-985a-cb8b1929d515
-blockquote(md"""
-Can you give some examples of effective "agile development" methods?
-""")
-
-# ╔═╡ e257f61c-3eae-4f60-a7e6-c57d6000a435
-md"""
-Example **Agile development** process:
-- Prepration:  Make a list of all the features you'd like ("product backlog")
-- Sprint Planning:  Which features will be addressed next? ("sprint backlog")
-  This can include tests and documentation, not just new features.
-- Sprint:  Implement tasks from spring backlog.  Add any new issues to the product backlog.
-- Review:  Present new features and get feedback from "customer".  
-- Retrospective:  What worked?  What didn't work?  Aim to make next spring more effective.
 """
 
 # ╔═╡ 06594327-f428-4a79-b338-4bbb28edc326
@@ -212,6 +178,17 @@ md"""
 ## Rapid fire question
 """
 
+# ╔═╡ 617b6a6c-4c3b-4c97-b9bb-38b2055fc69d
+blockquote(md"""
+Can you explain the $∼O(N^2)$ notation for handling memory/storage efficiency.
+""")
+
+# ╔═╡ 95a1bbdb-61b5-4dbf-9eca-574620327113
+md"""
+- Here $N$ represents your problem size (e.g., size of matrix, number of grid cells, number of particles)
+- How does cost scale with your problem size?
+"""
+
 # ╔═╡ 6d494233-cdd9-4fb1-b824-0d3c0fe83847
 blockquote(md"""
 Are there instances where we should not follow Big O notation to create a more efficient algorithm?
@@ -232,6 +209,19 @@ What are some optimization methods for code limited by memory bandwidth?
 # ╔═╡ e6601dca-2f0d-4b90-a9e9-d627e0bdee81
 md"""
 See week 4.  
+"""
+
+# ╔═╡ 3e0fd5d6-4d44-4c15-af85-979f758343e9
+blockquote(md"""How do you recommend we implement symbolic debugging in our research? Can you give an example of a "interactive program inspector" and how it could be used in scientific computation and software research?
+""")
+
+# ╔═╡ 515fdef7-1656-4db3-8fd1-5dc85e8f23cb
+md"""
+- It's best if you can avoid the need to use symbolic debugging.  
+Examples: 
+- Classic example: `gprof`
+- Now, more likely to use an IDE like VSCode
+- But even Jupyter/Pluto can serve this purpose.
 """
 
 # ╔═╡ d668c412-5cdb-4390-9a0b-c3ee48c0dd2b
@@ -341,7 +331,7 @@ version = "0.11.4"
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[Dates]]
 deps = ["Printf"]
@@ -509,7 +499,7 @@ version = "2.7.2"
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[PlutoHooks]]
 deps = ["InteractiveUtils", "Markdown", "UUIDs"]
@@ -667,22 +657,16 @@ version = "17.4.0+0"
 # ╟─e42d4ec9-a51e-4f29-9741-d55cc8e09f98
 # ╟─b6b281af-64a1-44b4-a9b6-ee0ba17f5c0b
 # ╟─43283bfe-6736-447c-9519-633cf97e6473
+# ╟─4a3a7167-41f6-4b66-a833-4e62f1761446
+# ╟─38bbdb0c-9ec2-46f0-985a-cb8b1929d515
+# ╟─e257f61c-3eae-4f60-a7e6-c57d6000a435
 # ╟─6f1964d8-0d7b-4a32-a0a6-eb53c37f76c7
 # ╟─0de09109-9182-4679-9e5d-46bb0cf8880e
-# ╟─48fb5bae-9227-49e9-aacd-006e8cb6d74f
-# ╟─70d0decb-de58-4b1a-b31c-2230a9447a9a
-# ╟─1dfb44d6-f77c-4305-97cd-2d71bdd6ef14
 # ╟─2e9f3b0d-d4ff-496b-9eb6-633deb4be4e6
 # ╟─c42bf975-9c1a-4b9d-a85d-333eacc28d6e
 # ╟─9e9b227c-f74c-4734-af5b-99d087401155
 # ╟─21494e02-872f-48a1-ba01-3ac6c35c79a5
 # ╟─12fabb9c-5302-42d2-bf18-90d8f4e71fb1
-# ╟─960357ef-3a9c-4397-b9cf-351925ee64e2
-# ╟─a07ab5af-23ca-4ecd-9304-3a1f14fe56bc
-# ╟─ca249c00-db7e-416e-b511-644b4ef0de81
-# ╟─4a3a7167-41f6-4b66-a833-4e62f1761446
-# ╟─38bbdb0c-9ec2-46f0-985a-cb8b1929d515
-# ╟─e257f61c-3eae-4f60-a7e6-c57d6000a435
 # ╟─06594327-f428-4a79-b338-4bbb28edc326
 # ╟─e124daaf-b878-442f-99f2-776b6995dc24
 # ╠═0df5450d-9241-47f4-aeb4-099855a5ce1f
@@ -690,10 +674,14 @@ version = "17.4.0+0"
 # ╠═22ca5cf2-4f80-4048-bcbb-ed5ebbe1e8c2
 # ╟─bde2fd7d-0a9e-4d0c-92be-d2151c411b34
 # ╟─2e128c72-c6b0-4487-ab48-3ceb6665f6ff
+# ╟─617b6a6c-4c3b-4c97-b9bb-38b2055fc69d
+# ╟─95a1bbdb-61b5-4dbf-9eca-574620327113
 # ╟─6d494233-cdd9-4fb1-b824-0d3c0fe83847
 # ╟─5f583a12-3d83-4e91-8f8e-097765f76f58
 # ╟─1f31759c-47ff-4b2e-902e-bba94051940c
 # ╟─e6601dca-2f0d-4b90-a9e9-d627e0bdee81
+# ╟─3e0fd5d6-4d44-4c15-af85-979f758343e9
+# ╟─515fdef7-1656-4db3-8fd1-5dc85e8f23cb
 # ╟─d668c412-5cdb-4390-9a0b-c3ee48c0dd2b
 # ╟─14f49798-4eec-4e79-b263-5d63571154ab
 # ╟─6ce78fcf-fe79-47a3-a93e-830c32dd500c
