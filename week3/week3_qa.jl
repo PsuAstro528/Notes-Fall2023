@@ -83,7 +83,7 @@ md"""
   + Descriptive variable/functgion names
   + Assertions to document/enforce pre-conditions (and post-conditions)
   + Specify types for function inputs
-  + [Named parameters//keyword arguments](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)
+  + [Named parameters/keyword arguments](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)
   + Passing/returning [NamedTuple](https://docs.julialang.org/en/v1/manual/types/#Named-Tuple-Types)'s or [composite types](https://docs.julialang.org/en/v1/manual/types/#Composite-Types) rather than several values
 """
 
@@ -166,20 +166,15 @@ md"""
 # Week 3 Q&A
 """
 
-# ╔═╡ ba7ad663-e123-42c9-9a06-48fc6924752e
-question_box(md"""
-Does Julia follow row-major order or column-major order?
-""")
-
-# ╔═╡ ab20ad52-16df-4543-8acb-ea2fc0b389ad
-md"""
-**Column-major**
-"""
-
 # ╔═╡ fc9ae0ec-298b-4542-9c71-dbbe535b4bd9
 md"""
 ## Pre-allocating storage space
 """
+
+# ╔═╡ 2e4010cf-c7a1-45d8-801a-877b99220ae4
+question_box(md"""
+From my experiences in Python and Julia, I don't write something I want to output as an argument. I will simply return it or leave it as a global variable that is updated whenever I execute the function. Is there a simple example of output arguments in Python or Julia?
+""")
 
 # ╔═╡ 7c82c012-9808-4049-a94b-28f14108cc74
 question_box(md"""
@@ -239,6 +234,26 @@ end
 question_box(md"""
 [Please explain the] difference between scratch space arrays and allocating / de-allocating memory... How one decides which one to use?
 """)
+
+# ╔═╡ 6f35d08f-46a9-4518-be97-48c82e3469fd
+question_box(md"""
+The chapter tells us that at the low level, we should optimize temporal locality and memory usage. What is an example of that being done?
+""")
+
+# ╔═╡ 266998ac-0f48-4881-bc14-1989da09079f
+md"""
+See matrix multiply example above and in Lab 3, Ex 1.
+"""
+
+# ╔═╡ ba7ad663-e123-42c9-9a06-48fc6924752e
+question_box(md"""
+Does Julia follow row-major order or column-major order?
+""")
+
+# ╔═╡ ab20ad52-16df-4543-8acb-ea2fc0b389ad
+md"""
+**Column-major**
+"""
 
 # ╔═╡ cf913e43-4499-4efc-87cb-2474222b8865
 md"""
@@ -323,10 +338,8 @@ end
 # ╔═╡ abee77fd-e2a2-403b-ab43-b4ea6741ba4c
 md"# Memory types & allocation"
 
-# ╔═╡ d4dbfc77-7dad-4e7b-83f4-c35a61a0d4a2
-md"""
-Can you explain what a register is/the difference between registers and main memory?
-"""
+# ╔═╡ f30ba966-1ccb-4a64-85b5-169de94b83dd
+question_box(md"""I am sort of confused about memory. What is a memory hierarchy?""")
 
 # ╔═╡ e46c0510-f604-4025-bef5-9029e3747447
 md"""
@@ -447,8 +460,7 @@ md"""
 """
 
 # ╔═╡ 40b4700a-47fe-4af9-9160-a31b3e8c93aa
-question_box(md"""
-How do you determine the order of complexity your algorithm may fall into?"
+question_box(md"""If the algorithm you are using is not on a big O notation cheat sheet, is there a simple way to figure out what your big O is for that algorithm?
 """)
 
 # ╔═╡ 4e243e0d-f2a8-4ef9-a58a-b5cde84e78bc
@@ -467,6 +479,35 @@ md"""
 - Might an approximate algorithm be acceptable?
 - Ask an advisor/colleague if they have alternative suggestions?
 """
+
+# ╔═╡ 1f43b79a-c7d7-4b17-8b82-7b666211b936
+md"""
+## Julia Questions
+"""
+
+# ╔═╡ bfe377e1-e872-4218-abc2-a1f945784d8d
+question_box(md"""What is the difference between a missing value and a nothing value in Julia?""")
+
+# ╔═╡ 7602430d-205f-40f0-9ffc-39a8167d26a8
+2*missing
+
+# ╔═╡ 273bd6a5-5932-44b9-a20c-e9e66359d110
+@test_broken 3*nothing
+
+# ╔═╡ 2a72a666-eac1-440c-9a14-550c07f1e6fa
+question_box(md"""When would one of them be useful over the other?""")
+
+# ╔═╡ e3a29707-145c-419e-a81f-bee3e151a992
+md"""
+- `missing`:  You were expecting an output but don't have one (e.g., an array of values, missing data for statistical analysis)
+- `nothing`:  A function wasn't able to do what is intended for your inputs (e.g., you search for a substring, but don't find any)
+"""
+
+# ╔═╡ 79f303de-9e8e-4125-8c69-5f3a1a45ff2d
+match(r"_(\d{8})\.fits","data_20230606.fits")
+
+# ╔═╡ 466aaaf9-3e94-488d-9594-17c4761ecb5f
+typeof(match(r"_(\d{4})\.fits","data_20230606.fits"))
 
 # ╔═╡ e7a5a559-6051-439a-980c-90bed8503eb8
 md"""
@@ -1785,9 +1826,8 @@ version = "1.4.1+0"
 # ╟─3099a52d-07de-4ebc-8d15-12de111395d8
 # ╟─ec8faefa-8e21-4874-bc98-6487b22e4529
 # ╟─348ee204-546f-46c5-bf5d-7d4a761002ec
-# ╟─ba7ad663-e123-42c9-9a06-48fc6924752e
-# ╟─ab20ad52-16df-4543-8acb-ea2fc0b389ad
 # ╟─fc9ae0ec-298b-4542-9c71-dbbe535b4bd9
+# ╟─2e4010cf-c7a1-45d8-801a-877b99220ae4
 # ╟─7c82c012-9808-4049-a94b-28f14108cc74
 # ╠═34840126-4365-418d-bc55-4ac3bd85f43f
 # ╠═5de73fe6-fb0e-4a98-b2ba-f4e592f02006
@@ -1795,6 +1835,10 @@ version = "1.4.1+0"
 # ╠═1b42bd08-9611-4d96-9d91-fdce9d24982f
 # ╠═060bc23d-52fa-4536-aa50-26390552997f
 # ╟─c6b8a205-7b43-4d21-b680-ac0d56958707
+# ╟─6f35d08f-46a9-4518-be97-48c82e3469fd
+# ╟─266998ac-0f48-4881-bc14-1989da09079f
+# ╟─ba7ad663-e123-42c9-9a06-48fc6924752e
+# ╟─ab20ad52-16df-4543-8acb-ea2fc0b389ad
 # ╟─cf913e43-4499-4efc-87cb-2474222b8865
 # ╠═cb988242-8aa6-4f31-955e-021024e0c921
 # ╟─22c6cf9f-2266-4908-8bb5-ad30d7388c06
@@ -1812,7 +1856,7 @@ version = "1.4.1+0"
 # ╟─5f45fe0e-81df-4dd5-b827-628e0831755e
 # ╠═cbea527b-9a62-40d4-b922-47f4428a8b33
 # ╟─abee77fd-e2a2-403b-ab43-b4ea6741ba4c
-# ╟─d4dbfc77-7dad-4e7b-83f4-c35a61a0d4a2
+# ╟─f30ba966-1ccb-4a64-85b5-169de94b83dd
 # ╟─e46c0510-f604-4025-bef5-9029e3747447
 # ╟─ed0bc201-03c0-448b-bfeb-9f43d7e9ad7a
 # ╟─f0111b2d-7a7c-4029-8fd0-7c0785b5b038
@@ -1835,6 +1879,14 @@ version = "1.4.1+0"
 # ╟─4e243e0d-f2a8-4ef9-a58a-b5cde84e78bc
 # ╟─9792781c-272c-4ae2-881b-567d9c8e53e1
 # ╟─28decc84-d3ba-4900-bbb3-3916f5aa18b8
+# ╟─1f43b79a-c7d7-4b17-8b82-7b666211b936
+# ╟─bfe377e1-e872-4218-abc2-a1f945784d8d
+# ╠═7602430d-205f-40f0-9ffc-39a8167d26a8
+# ╠═273bd6a5-5932-44b9-a20c-e9e66359d110
+# ╟─2a72a666-eac1-440c-9a14-550c07f1e6fa
+# ╟─e3a29707-145c-419e-a81f-bee3e151a992
+# ╠═79f303de-9e8e-4125-8c69-5f3a1a45ff2d
+# ╠═466aaaf9-3e94-488d-9594-17c4761ecb5f
 # ╟─e7a5a559-6051-439a-980c-90bed8503eb8
 # ╟─8016a7ef-ced4-4c44-8d36-400f8bc0b7fa
 # ╟─c65f334d-9269-4d33-a0e8-9781dbf914b7
