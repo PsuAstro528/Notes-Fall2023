@@ -82,7 +82,7 @@ md"""
 
 # ╔═╡ 9727c06c-c98d-4f0d-ab5b-3db0bb6ea4a8
 md"""
-### Performance tips for Julia (and other JIT languages)
+### Common Performance Pitfalls for Julia (and other JIT languages)
 - Not organization code into small functions
 - Type instability
   - Untyped global variables
@@ -91,9 +91,11 @@ md"""
 - Unnecessary memory allocations
   - Not taking advantage of fusing and broadcasting
   - Making copies instead of using a `view` (`array[1:5,:]` instead of `view(array,1:5,:)`)
-  - Many small allocations on heap
+  - Many small allocations on heap (instead use StaticArrays.jl)
 - Order of memory accesses
 - Not adding annotations that allow for compiler optimizations (e.g., `@inbounds`, `@fastmath`, `@simd`, `@turbo`)
+- Unnecessary use of strings or string interpolation
+- Writing code that could be parallelized in a way that it isn't parallelized
 """
 
 # ╔═╡ 3ba81578-5de1-4d45-9f73-afe3166cba17
