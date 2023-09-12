@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -649,24 +649,15 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
-
-[compat]
-BenchmarkTools = "~1.3.2"
-ForwardDiff = "~0.10.36"
-Plots = "~1.39.0"
-PlutoTeachingTools = "~0.2.13"
-PlutoTest = "~0.2.2"
-PlutoUI = "~0.7.52"
-StaticArrays = "~1.6.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "cbc07f5780e5361ec821146a204f618b6644a0f4"
+project_hash = "575f23ad0d203b0bd057864907d8a8b17a52c363"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -766,7 +757,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1094,10 +1085,10 @@ uuid = "7add5ba3-2f88-524e-9cd5-f83b8a55f7b8"
 version = "1.42.0+0"
 
 [[deps.Libiconv_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "f9557a255370125b405568f9767d6d195822a175"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "c7cb1f5d892775ba13767a87c7ada0b980ea0a71"
 uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.17.0+0"
+version = "1.16.1+2"
 
 [[deps.Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1142,9 +1133,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[deps.LoggingExtras]]
 deps = ["Dates", "Logging"]
-git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
+git-tree-sha1 = "a03c77519ab45eb9a34d3cfe2ca223d79c064323"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
-version = "1.0.2"
+version = "1.0.1"
 
 [[deps.LoweredCodeUtils]]
 deps = ["JuliaInterpreter"]
@@ -1276,7 +1267,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1292,9 +1283,9 @@ version = "1.3.5"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "ccee59c6e48e6f2edf8a5b64dc817b6729f99eb5"
+git-tree-sha1 = "9f8675a55b37a70aa23177ec110f6e3f4dd68466"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.39.0"
+version = "1.38.17"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -1582,10 +1573,10 @@ uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
 
 [[deps.XML2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
-git-tree-sha1 = "04a51d15436a572301b5abbb9d099713327e9fc4"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "Zlib_jll"]
+git-tree-sha1 = "93c41695bc1c08c46c5899f4fe06d6ead504bb73"
 uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.10.4+0"
+version = "2.10.3+0"
 
 [[deps.XSLT_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
@@ -1887,7 +1878,7 @@ version = "1.4.1+0"
 # ╟─e3a29707-145c-419e-a81f-bee3e151a992
 # ╠═79f303de-9e8e-4125-8c69-5f3a1a45ff2d
 # ╠═466aaaf9-3e94-488d-9594-17c4761ecb5f
-# ╟─e7a5a559-6051-439a-980c-90bed8503eb8
+# ╠═e7a5a559-6051-439a-980c-90bed8503eb8
 # ╟─8016a7ef-ced4-4c44-8d36-400f8bc0b7fa
 # ╟─c65f334d-9269-4d33-a0e8-9781dbf914b7
 # ╟─674067d7-d4f3-4423-82cf-96e23d84f0f1
