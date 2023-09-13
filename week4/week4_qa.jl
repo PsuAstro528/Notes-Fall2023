@@ -354,7 +354,56 @@ end
 
 # ╔═╡ 11a7fdff-a366-405b-b53b-bf39ca570ee6
 md"""
-# Resume Q&A here on Wednesday
+# Start here on Wednesday
+"""
+
+# ╔═╡ 1b474b62-4ab1-4ce3-b532-b614c6163206
+md"""
+## Noteworthy bugs
+"""
+
+# ╔═╡ a45b7e2a-8f5b-4c0b-a814-1c214ac8bdd1
+md"""
+### Test scripts
+
+Julia's test system triggers
+```julia
+julia --project=@. -e ' import Pkg; Pkg.test() 
+```
+That's nice, but doesn't you don't want to run all the tests.  So I had suggested:
+- `julia --project=test runtests.jl` or
+- `julia --project=test test1.jl`
+so that you could test one exercise at a time or all at once.  And that's how I tested them.  
+But it turns out the current paths is slightly different than if you had run automated testing.
+For future labs, I'll setup tests with
+- `julia --project -e 'cd("test"); include("runtests.jl")'` or 
+- `julia --project -e 'cd("test"); include("test1.jl")'`
+"""
+
+# ╔═╡ 18b386eb-5185-4bd6-89da-39fb54a0f068
+md"""
+## `@inbounds`
+
+In Lab 3, I demonstrated a small scale optimization for inner loops:
+```julia
+x = rand(n)
+for i in 1:n
+   @inbounds x[i] *= 2
+end
+```
+This is *very dangerous* if you try to access an element outside the array bounds.
+This prevents you from getting useful error messages.  Instead the operating system may kill your job whenever it accesses memory that it doesn't have permission to access.  In this case, the operating system kept killing the julia kernel for the student's notebook, making it hard to debug.
+
+"""
+
+# ╔═╡ 0126154f-430e-4393-88a4-beb70f73cae7
+md"""
+You can turn bounds checking on/off globally (overwriting `@inbounds` markings) by starting julia with `julia --check-bounds=yes` or `julia --check-bounds=no`.  This can be useful for testing how much adding inbounds could help and checking whether an error might be due to a spurious `@inbounds`
+"""
+
+# ╔═╡ 9e00b045-2f36-496c-82cd-d1053e0c49dd
+md"""
+## More Q&A from week 4
 """
 
 # ╔═╡ 7bdb6187-fff8-4fb6-a094-7fca0bb4f565
@@ -1525,6 +1574,11 @@ version = "17.4.0+0"
 # ╟─40849999-1b64-4f91-9039-0983b532b30b
 # ╠═3bf5a88e-1c1a-4c82-be3e-24370f897da5
 # ╟─11a7fdff-a366-405b-b53b-bf39ca570ee6
+# ╟─1b474b62-4ab1-4ce3-b532-b614c6163206
+# ╟─a45b7e2a-8f5b-4c0b-a814-1c214ac8bdd1
+# ╟─18b386eb-5185-4bd6-89da-39fb54a0f068
+# ╟─0126154f-430e-4393-88a4-beb70f73cae7
+# ╟─9e00b045-2f36-496c-82cd-d1053e0c49dd
 # ╟─7bdb6187-fff8-4fb6-a094-7fca0bb4f565
 # ╟─b11dc85d-97c5-4976-a9be-6f75b022b5e9
 # ╟─d016269b-d00f-48f0-8178-3000272bc0ee
