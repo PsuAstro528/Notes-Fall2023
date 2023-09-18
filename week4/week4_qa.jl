@@ -368,7 +368,7 @@ md"""
 
 Julia's test system triggers
 ```julia
-julia --project=@. -e ' import Pkg; Pkg.test() 
+julia --project=@. -e ' import Pkg; Pkg.test() '
 ```
 That's nice, but doesn't you don't want to run all the tests.  So I had suggested:
 - `julia --project=test runtests.jl` or
@@ -409,6 +409,16 @@ md"""
 # ╔═╡ 7bdb6187-fff8-4fb6-a094-7fca0bb4f565
 blockquote(md"""How does the computer decide what is "local" in its memory? ...
 when does the local memory become so big that it is no longer more efficient than just accessing the "hard" memory?""")
+
+# ╔═╡ 51956927-f60e-410b-ad1e-42c9b9a9ec7d
+md"""
+- Saying a variable "is" local/global/module refers to the variable *scope*, i.e., where in your code can you access the variable
+- Efficiency depends on where the data is stored *physically* in silicon
+- Small, known-size local variables go on the *stack* which is typically in a cache whenever your process/thread is running.  Thus local variables typically give good performance.  
+- Large variables and variables whose size can't be deduced at compile time go on the *heap*
+- A small fraction of the heap will have a copy resized in cache at any time and still give good performance.  
+- We can increase the probability of the data from the heap we want being in cache by choosing data structures, algorithms and implementations that access data that stored nearby in the physical memory system.   
+"""
 
 # ╔═╡ b11dc85d-97c5-4976-a9be-6f75b022b5e9
 md"""
@@ -453,15 +463,24 @@ md"## Looking at typed code for arrays"
 
 # ╔═╡ 4edc3127-7c93-4608-9a01-d965587110c7
 md"Output below is from running 
-`@code_typed calc_radius1.(xs,ys) on arrays`
+`@code_typed calc_radius1.(xs,ys) on standard arrays`.
+Remember, that functionw as simply
+```julia
+calc_radius1(x,y) = sqrt(x*x + y*y)
+```
 "
 
 # ╔═╡ 50cacc64-7410-404a-9218-7f09b1ed54e9
 let
-	xs = randn(5)
-	ys = randn(5)
+	xs = randn(3)
+	ys = randn(3)
 	@code_typed calc_radius1.(xs,ys)
 end 
+
+# ╔═╡ 8c99b14d-98f6-4237-bb28-923a047d9ba0
+md"""
+### Compare to calling same function on static arrays
+"""
 
 # ╔═╡ 1fc5e11b-bdf1-4903-b2b4-273a8f14c1e7
 md"Output below is from running 
@@ -470,10 +489,15 @@ md"Output below is from running
 
 # ╔═╡ b811912d-6b7d-4be5-adcf-d72ff60630b4
 let
-	xs = @SVector randn(5)
-	ys = @SVector randn(5)
+	xs = @SVector randn(3)
+	ys = @SVector randn(3)
 	@code_typed calc_radius1.(xs,ys)
 end
+
+# ╔═╡ f3e14835-359d-4423-8f62-a3fbe9bd7c9e
+md"""
+### Compare to same expression but using `@fastmath` 
+"""
 
 # ╔═╡ b89ff596-1e3f-47f7-a7a0-e16d5b8cf79a
 md"""
@@ -488,8 +512,8 @@ calc_radius3(x,y) = @fastmath sqrt(x*x + y*y)
 
 # ╔═╡ 887dbb87-2003-4881-b681-85b55a450333
 let
-	xs = @SVector randn(5)
-	ys = @SVector randn(5)
+	xs = @SVector randn(3)
+	ys = @SVector randn(3)
 	@code_typed calc_radius3.(xs,ys)
 end
 
@@ -618,7 +642,7 @@ begin
 	N = 10000
 	x = randn(N)
 	y = randn(N)
-	result = zeros(N)
+	result = 2 .* x.+y
 end;
 
 # ╔═╡ 5b13fd2a-0833-42ce-b86a-bdc6ff9929d7
@@ -1580,6 +1604,7 @@ version = "17.4.0+0"
 # ╟─0126154f-430e-4393-88a4-beb70f73cae7
 # ╟─9e00b045-2f36-496c-82cd-d1053e0c49dd
 # ╟─7bdb6187-fff8-4fb6-a094-7fca0bb4f565
+# ╟─51956927-f60e-410b-ad1e-42c9b9a9ec7d
 # ╟─b11dc85d-97c5-4976-a9be-6f75b022b5e9
 # ╟─d016269b-d00f-48f0-8178-3000272bc0ee
 # ╟─2be369c7-fd0b-4157-aa14-edcfdba91e9f
@@ -1588,8 +1613,10 @@ version = "17.4.0+0"
 # ╟─0c7b622d-f1c8-435a-8eb7-e466c9ff844a
 # ╟─4edc3127-7c93-4608-9a01-d965587110c7
 # ╠═50cacc64-7410-404a-9218-7f09b1ed54e9
+# ╟─8c99b14d-98f6-4237-bb28-923a047d9ba0
 # ╟─1fc5e11b-bdf1-4903-b2b4-273a8f14c1e7
 # ╠═b811912d-6b7d-4be5-adcf-d72ff60630b4
+# ╟─f3e14835-359d-4423-8f62-a3fbe9bd7c9e
 # ╟─b89ff596-1e3f-47f7-a7a0-e16d5b8cf79a
 # ╠═c9711717-cfe2-4f48-9229-7d6cf981fb8b
 # ╠═887dbb87-2003-4881-b681-85b55a450333
@@ -1635,8 +1662,8 @@ version = "17.4.0+0"
 # ╠═3d397d17-2aa7-4281-a4d6-16a1764710b3
 # ╠═d407364c-230a-45a6-bdc5-bf9bb385cdff
 # ╟─abee77fd-e2a2-403b-ab43-b4ea6741ba4c
-# ╠═f3692ac6-78a9-4afd-b412-b279769b4be8
-# ╠═d4dbfc77-7dad-4e7b-83f4-c35a61a0d4a2
+# ╟─f3692ac6-78a9-4afd-b412-b279769b4be8
+# ╟─d4dbfc77-7dad-4e7b-83f4-c35a61a0d4a2
 # ╟─e46c0510-f604-4025-bef5-9029e3747447
 # ╟─ed0bc201-03c0-448b-bfeb-9f43d7e9ad7a
 # ╟─f4ad0d7b-871c-4ca8-9158-a8b8086282ea
