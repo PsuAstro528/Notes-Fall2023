@@ -50,8 +50,7 @@ md"""
 
 ## Labs
 - Review feedback on Lab 3 via GitHub
-- Can preview Lab 5: [GitHub repo](https://github.com/PsuAstro528/lab5-start) 
-- Will test more before posting link to create your Lab 5 repos
+- Can start Lab 5: [GitHub repo](https://github.com/PsuAstro528/lab5-start) before class Wednesday
 """
 
 # ╔═╡ 31476473-d619-404c-a1c1-b32c1b8c5930
@@ -236,7 +235,7 @@ function my_model(x,p)
 	if x<0
 		return 1
 	else
-		1 + p*x
+		return 1 + p*x
 	end
 end
 
@@ -401,13 +400,13 @@ md"""
 **Q:** When profiling code, a function taking up a large percentage of the total runtime can indicate need for optimization.  This is tied to the number of calls and the time per call. Are there scenarios where the time per call may be optimized but there is a runaway on the number of calls? If so, how would we look out for this type of leak?
 """
 
+# ╔═╡ 4c3332a8-a5d1-43fb-887b-ac66dfa02de5
+md"# Programming Interfaces & Frameworks"
+
 # ╔═╡ 6aa30a32-b9a6-480e-90a5-6ca299564de2
 blockquote(md"""
 Can you explain what a framework is and how would one "frameworkize" their code?
 """)
-
-# ╔═╡ 4c3332a8-a5d1-43fb-887b-ac66dfa02de5
-md"# Programming Interfaces & Frameworks"
 
 # ╔═╡ 29ce1dbf-e1b3-4136-9e93-6caaaaf102ed
 md"**Q:** In the [Julia performance tips](https://docs.julialang.org/en/v1/manual/performance-tips/), it mentions abstract containers a lot. Could you explain them a bit more in depth?"
