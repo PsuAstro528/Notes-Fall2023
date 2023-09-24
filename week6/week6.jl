@@ -25,12 +25,6 @@ md"> Astro 528: High-Performance Scientific Computing for Astrophysics (Fall 202
 # ╔═╡ b9baebea-2312-4c28-905c-b47ec3a26415
 ChooseDisplayMode()
 
-# ╔═╡ 0588f080-1da7-4df0-930b-582c065cab75
-md"ToC on side $(@bind toc_aside CheckBox(;default=true))"
-
-# ╔═╡ c94864a5-996d-432d-8e14-888991c8e119
-TableOfContents(aside=toc_aside)
-
 # ╔═╡ 373376f2-3557-42f5-bdeb-9ae70ed3d060
 md"""
 # Week 6 Discussion
@@ -85,6 +79,50 @@ md"""
   -  Install Weave (once): `julia --project=. -e 'import Pkg; Pkg.add("Weave")' # 
   -  Convert Jupyter notebook to markdwon (each time you want to update the markdown): `julia --project=. -e 'using Weave; convert\_doc("NOTEBOOK\_NAME.ipynb","NOTEBOOK\_NAME.jmd")' 
 - Provide most feedback via [GitHub Issues](https://guides.github.com/features/issues/)
+"""
+
+# ╔═╡ 533dbe7a-aae6-41dd-8737-2f995bb6c7f6
+md"""
+# Q&A
+"""
+
+# ╔═╡ d8fd8af3-a65d-4230-bb35-e1144e459520
+blockquote(md"""
+What exactly is "scratch" memory, and what differentiates it from other kinds of memory?
+""")
+
+# ╔═╡ 838815fa-5917-4347-bb3c-bf8300d2d942
+md"""
+"Scratch" can mean different things depending on context:
+- A separate physical disk or file system that is intended to be used for temporary files.
+  - E.g., Roar's `/storage/scratch/USERID/` provides large storage but autodeletes your files
+- A portion of memory allocated and reserved for holding scratch data
+  - E.g., preallocating a workspace to be used for auto-differentiation, integration, factoring a matrix, etc.
+"""
+
+# ╔═╡ f965c656-6b7b-441d-8111-855ecfe79ca6
+blockquote(md"""
+How does memory function from cell-to-cell within a notebook? Is it more efficient to split up code over many cells, or have them operate in the same one? How does this impact runtime and general performance?
+""")
+
+# ╔═╡ f0fc9af7-737c-4c08-a772-1136be959a6d
+md"""
+- It's more efficient to split up code into separate functions (regardless of whether they are in the same cell or not).
+- There might be a very slight latency cost of having lots of cells.  But that's unlikley significant unless you are making a really big notebook.
+"""
+
+# ╔═╡ d2cc4026-b2f0-4201-bf3b-c1615bbc9ab7
+blockquote(md"""
+What are the main causes of thrashing and how does Julia mitigate it? Specifically, how does Julia’s garbage collection reduce thrashing, if there even is a strong connection?
+""")
+
+# ╔═╡ fed62143-6d25-4d6a-927b-84f5d20fab0d
+md"""
+- Lots of small allocations on the heap
+- Java (probably the first "major" language to have garbage collection built-in) gave garbage collection a bad reputation because it only allows mutable user-defined types (and passes all objects by pointers), making it quite hard to avoid heap allocation of even very small objects.  
+- Julia (and C#) encourage the use of immutable types
+- Julia pass variables by reference (so they can pass variables on the stack)
+- C# passes variables by value by default (so they stay on stack, but often unnecessary stack allocations) and can pass by reference.
 """
 
 # ╔═╡ e7736d75-ca00-4b63-90cb-b70f4a4f1a48
@@ -225,6 +263,12 @@ Ask for clarification"""
 md"""
 # Setup
 """
+
+# ╔═╡ 0588f080-1da7-4df0-930b-582c065cab75
+md"ToC on side $(@bind toc_aside CheckBox(;default=true))"
+
+# ╔═╡ c94864a5-996d-432d-8e14-888991c8e119
+TableOfContents(aside=toc_aside)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -603,6 +647,13 @@ version = "17.4.0+0"
 # ╟─b7412f06-287f-41b1-b0b4-0dec44f36a08
 # ╟─7a13c062-b641-4894-9288-4a79c1005c49
 # ╟─56ae82e4-9e28-438b-a6c8-d099b56af913
+# ╟─533dbe7a-aae6-41dd-8737-2f995bb6c7f6
+# ╟─d8fd8af3-a65d-4230-bb35-e1144e459520
+# ╟─838815fa-5917-4347-bb3c-bf8300d2d942
+# ╟─f965c656-6b7b-441d-8111-855ecfe79ca6
+# ╟─f0fc9af7-737c-4c08-a772-1136be959a6d
+# ╟─d2cc4026-b2f0-4201-bf3b-c1615bbc9ab7
+# ╟─fed62143-6d25-4d6a-927b-84f5d20fab0d
 # ╟─e7736d75-ca00-4b63-90cb-b70f4a4f1a48
 # ╟─ac33892a-64ca-412b-865d-cefe2be1df15
 # ╟─f508c1c8-945b-4b99-8985-5f10946b0239
