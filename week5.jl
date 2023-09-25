@@ -375,29 +375,31 @@ end
 # ╔═╡ 9ab94eea-4d57-4ef2-a73a-64e7c8b89222
 integrate_f(func_that_needs_parameters,0,π; θ=4)
 
-# ╔═╡ 7850deec-4ee8-4858-8346-7e56cac3e021
+# ╔═╡ f98bd239-42e5-4b02-a499-5ead936be782
 md"""
-## Profiling
+## Resume here on Wednesday
 """
 
-# ╔═╡ 31306128-2672-47f0-a16a-c4fc00537e7a
-md"""
-**Q:** Could you show some examples about how profiling tools work in Julia or Python?
-"""
+# ╔═╡ 28b53ea4-5bdc-4ac2-b83e-bcb8f0a6416c
+blockquote(md"""
+How does Julia compile data into arrays efficiently if the array contains multiple different data types?""")
 
-# ╔═╡ b738c26d-ae0e-4ef7-a0e4-dc8b8843ec7e
-md"""
-**Q:** How can we extract the "critical path" from the results of a profiler?
-"""
+# ╔═╡ 8f4b3c77-e79f-457a-b9e9-9f30dd1f526a
+md"It can store an array of abstract types, but that can be quite inefficient."
 
-# ╔═╡ 01edbeca-5002-46ea-a826-520c0326acf7
-md"""
-**A:** See [Lab 5, Ex 1](https://psuastro528.github.io/lab5-start/ex1.html)
-"""
+# ╔═╡ 288d3aaf-ee71-44f5-aefb-4b7b787c7caa
+blockquote(md"""Is it best to make sure that all cells of your array have the same data type?
+""")
 
-# ╔═╡ 69d70f31-5915-47ba-a871-271bd76321b9
+# ╔═╡ 73b01b03-2016-4253-8f95-e0bdb3bca5f4
+md"**Yes!**"
+
+# ╔═╡ b556927c-ab72-41c5-9a3e-83756e40550a
+blockquote(md"What type of variables should always be passed to an inline function versus an external module (maybe large arrays/tables?) so they don't take up too much room on the stack?")
+
+# ╔═╡ 46d264b6-73da-4790-92e4-988728c7e1df
 md"""
-**Q:** When profiling code, a function taking up a large percentage of the total runtime can indicate need for optimization.  This is tied to the number of calls and the time per call. Are there scenarios where the time per call may be optimized but there is a runaway on the number of calls? If so, how would we look out for this type of leak?
+If you pass a data structure that's stored in the heap, then only a pointer (or something that acts like a pointer/reference) to that data is placed on the stack.  
 """
 
 # ╔═╡ 4c3332a8-a5d1-43fb-887b-ac66dfa02de5
@@ -565,6 +567,31 @@ begin
 	vec_c2 = fill(c2,n)
 	@benchmark dist($vec_c1,$vec_c2)
 end
+
+# ╔═╡ 7850deec-4ee8-4858-8346-7e56cac3e021
+md"""
+## Profiling
+"""
+
+# ╔═╡ 31306128-2672-47f0-a16a-c4fc00537e7a
+md"""
+**Q:** Could you show some examples about how profiling tools work in Julia or Python?
+"""
+
+# ╔═╡ b738c26d-ae0e-4ef7-a0e4-dc8b8843ec7e
+md"""
+**Q:** How can we extract the "critical path" from the results of a profiler?
+"""
+
+# ╔═╡ 01edbeca-5002-46ea-a826-520c0326acf7
+md"""
+**A:** See [Lab 5, Ex 1](https://psuastro528.github.io/lab5-start/ex1.html)
+"""
+
+# ╔═╡ 69d70f31-5915-47ba-a871-271bd76321b9
+md"""
+**Q:** When profiling code, a function taking up a large percentage of the total runtime can indicate need for optimization.  This is tied to the number of calls and the time per call. Are there scenarios where the time per call may be optimized but there is a runaway on the number of calls? If so, how would we look out for this type of leak?
+"""
 
 # ╔═╡ 78ac102e-992d-40bb-900a-056f871dc57f
 md"# Old Questions"
@@ -1971,11 +1998,13 @@ version = "1.4.1+0"
 # ╠═55af3d38-8956-4a22-8ca6-dbbb7de1b426
 # ╠═ccb63eb8-1da0-48ce-ae51-c18c48509445
 # ╠═9ab94eea-4d57-4ef2-a73a-64e7c8b89222
-# ╟─7850deec-4ee8-4858-8346-7e56cac3e021
-# ╟─31306128-2672-47f0-a16a-c4fc00537e7a
-# ╟─b738c26d-ae0e-4ef7-a0e4-dc8b8843ec7e
-# ╟─01edbeca-5002-46ea-a826-520c0326acf7
-# ╟─69d70f31-5915-47ba-a871-271bd76321b9
+# ╟─f98bd239-42e5-4b02-a499-5ead936be782
+# ╟─28b53ea4-5bdc-4ac2-b83e-bcb8f0a6416c
+# ╟─8f4b3c77-e79f-457a-b9e9-9f30dd1f526a
+# ╟─288d3aaf-ee71-44f5-aefb-4b7b787c7caa
+# ╟─73b01b03-2016-4253-8f95-e0bdb3bca5f4
+# ╟─b556927c-ab72-41c5-9a3e-83756e40550a
+# ╟─46d264b6-73da-4790-92e4-988728c7e1df
 # ╟─4c3332a8-a5d1-43fb-887b-ac66dfa02de5
 # ╟─6aa30a32-b9a6-480e-90a5-6ca299564de2
 # ╟─29ce1dbf-e1b3-4136-9e93-6caaaaf102ed
@@ -2007,6 +2036,11 @@ version = "1.4.1+0"
 # ╟─93beb233-81cc-47f8-89be-8164cc15d020
 # ╠═e04666f8-801b-4973-9b9e-807abc5199b7
 # ╠═c8a7838a-8f1a-4f33-a9de-48e60992d08b
+# ╟─7850deec-4ee8-4858-8346-7e56cac3e021
+# ╟─31306128-2672-47f0-a16a-c4fc00537e7a
+# ╟─b738c26d-ae0e-4ef7-a0e4-dc8b8843ec7e
+# ╟─01edbeca-5002-46ea-a826-520c0326acf7
+# ╟─69d70f31-5915-47ba-a871-271bd76321b9
 # ╟─78ac102e-992d-40bb-900a-056f871dc57f
 # ╟─252f394f-9d7d-41be-8cbf-ccb5558b83d1
 # ╟─c949701e-3399-44d8-9041-4dcb99c78cda
