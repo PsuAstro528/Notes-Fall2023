@@ -161,6 +161,83 @@ md"""
 - C# passes variables by value by default (so they stay on stack, but often unnecessary stack allocations) and can pass by reference.
 """
 
+# ╔═╡ 9cc0df7e-8844-4e45-92c2-75fc662a2a43
+blockquote(md"""
+I am still a bit confused about the high-water mark technique for creating flexibly-sized arrays/vectors. How do we determine the logical size that we need to make effective use of memory allocation? Is this just the true size of the vector instead of the actual size?
+""")
+
+# ╔═╡ 67d78fa5-c61a-4de7-a658-d74ff3c4572c
+md"""
+The idea is to allocate for the maximum possible size.  But that only works if you can figure that out in advance.
+"""
+
+# ╔═╡ 5797afa6-13ac-457d-aeee-5d4403f61787
+blockquote(md"""
+The reading talks about being cache friendly-- if we were performing a search wouldn't how cache friendly the search is be dependent on the search algorithm? How do we know what type of search algorithm is being used if we didn't write the code ourselves? How would we know how to optimize the structure of our code based on the search algorithm we are using and how the program/computer access memory?
+""")
+
+# ╔═╡ 2097dafd-e457-46b4-b6d6-fdf6f66c6675
+md"""
+- Read the documentation 
+- Choose the algorithm for your problem (e.g., [Description of sorting algorithms](https://docs.julialang.org/en/v1/base/sort/#Base.Sort.InsertionSort))
+- Consider order of algorithm and whether *in-place*
+- Most often, I choose the algorithm that's best fit for my data.
+- But sometimes I might change the data structure to be a better fit for my algorithm
+"""
+
+# ╔═╡ dd6c279f-d09b-4789-8776-7553dd023e1b
+begin 
+	x = rand(100)
+	x_sorted_default = sort(x)
+	x_sorted_insertion = sort(x, alg=InsertionSort)
+	x_sorted_merge = sort(x, alg=MergeSort)
+	x_sorted_quick = sort(x, alg=QuickSort)
+	@test all(x_sorted_default .== x_sorted_insertion) &&  
+		  all(x_sorted_default .== x_sorted_merge) && 
+		  all(x_sorted_default .== x_sorted_quick)
+end
+
+# ╔═╡ 9b9e06d6-0566-42f0-93bc-65206e3add02
+begin 
+	local n = 100
+	vec_of_pairs = collect(zip(rand(1:10,n), randn(n)))
+end
+
+# ╔═╡ d2d20b37-37c0-4bc4-bd20-ad28d367545a
+md"""
+But be careful... sometimes different algorithms give different results.  E.g., whether sorting is **stable**.
+"""
+
+# ╔═╡ 442d604f-79a0-473d-a5b1-d90ca303fc2e
+begin
+	function less_than_custom(a::Tuple,b::Tuple)
+		return a[1]<b[1]
+	end
+	
+	sorted_merge = sort(vec_of_pairs,lt=less_than_custom, alg=MergeSort)
+	sorted_quick = sort(vec_of_pairs,lt=less_than_custom, alg=QuickSort)
+end
+
+# ╔═╡ e203823e-3a1f-4812-b2a9-6ab80a811860
+sorted_merge, sorted_quick
+
+# ╔═╡ 083af3e8-77ad-4a30-8d80-282a5403b163
+@test !all(sorted_merge.==sorted_quick)
+
+# ╔═╡ dbebade8-f2ef-4a88-94ca-b195f8da8856
+blockquote(md"""Is there a different technique for creating flexible array sizes in Julia that doesn't require doubling of your physical size every time you add a row/column?
+""")
+
+# ╔═╡ 7a9234c7-2383-4885-83f2-0bb69bedd6da
+md"""
+By doubling the size allocated, you need to change the size much less often than if you increased by 1.
+"""
+
+# ╔═╡ d825f436-1c0d-49e4-820a-888e24b8a24f
+md"""
+# Resume here on Wedneseday
+"""
+
 # ╔═╡ 2c809a46-3592-4a39-84e2-f7520c6e7bfe
 md"""
 ## Other Questions
@@ -182,31 +259,55 @@ blockquote(md"""
 Can you demonstrate how to import a julia program into python?
 """)
 
-# ╔═╡ 4a4c7d04-e9d3-4640-aaf6-cb62a759ee30
+# ╔═╡ e00f7ffc-16dd-4e6f-ad85-74f6117eb958
+md"""
+First, setup PyCall.jl (to call Python from Julia) by running
+```shell
+> julia -e 'import Pkg; Pkg.add("PyCall");'
+```
+You only need to do that once (for each system you're running it on).
+"""
+
+# ╔═╡ 09199e18-da64-4abb-8053-e3bc0448df8b
+md"""
+Then from python/Jupyter notebook with Python kernel
+"""
+
+# ╔═╡ abf68ae8-2327-44eb-b0dc-24f66ae4f603
 md"""
 ```python
+from julia.api import Julia
+julia = Julia(compiled_modules=False)
 from julia import Base
 Base.sind(90)
 ```
+"""
 
+# ╔═╡ 626cd1f0-b2d0-48e4-88ee-775e1f037480
+md"""
 ```python
-from julia import Main
-Main.xs = [1, 2, 3]
-Main.eval("sin.(xs)")
+from julia import Main as jl
+jl.exp(0)
+jl.xs = [1, 2, 3]
+jl.eval("sin.(xs)")
 ```
 """
 
 # ╔═╡ d2f4bb2d-d222-4c61-9c63-a57bdfef1927
 md"""
 ```python
-import numpy
-import julia
+import numpy as np
+x = np.array([1.0, 2.0, 3.0])
 
-x = np.array([0.0, 0.0, 0.0])
+jl.sum(x)
+```
+"""
 
-j = julia.Julia()
-j.include("my_julia_code.jl")
-j.function_in_my_julia_code(x)
+# ╔═╡ 9e23b40c-e252-438f-a151-0e8c3d0d8271
+md"""
+```python
+jl.include("my_julia_code.jl")
+jl.function_in_my_julia_code(x)
 ```
 """
 
@@ -819,12 +920,29 @@ version = "17.4.0+0"
 # ╟─603442cb-fdd9-4551-b503-6af0dddc86d7
 # ╟─d2cc4026-b2f0-4201-bf3b-c1615bbc9ab7
 # ╟─fed62143-6d25-4d6a-927b-84f5d20fab0d
+# ╟─9cc0df7e-8844-4e45-92c2-75fc662a2a43
+# ╟─67d78fa5-c61a-4de7-a658-d74ff3c4572c
+# ╟─dbebade8-f2ef-4a88-94ca-b195f8da8856
+# ╟─7a9234c7-2383-4885-83f2-0bb69bedd6da
+# ╟─5797afa6-13ac-457d-aeee-5d4403f61787
+# ╟─2097dafd-e457-46b4-b6d6-fdf6f66c6675
+# ╠═dd6c279f-d09b-4789-8776-7553dd023e1b
+# ╠═9b9e06d6-0566-42f0-93bc-65206e3add02
+# ╟─d2d20b37-37c0-4bc4-bd20-ad28d367545a
+# ╠═442d604f-79a0-473d-a5b1-d90ca303fc2e
+# ╠═e203823e-3a1f-4812-b2a9-6ab80a811860
+# ╠═083af3e8-77ad-4a30-8d80-282a5403b163
+# ╟─d825f436-1c0d-49e4-820a-888e24b8a24f
 # ╟─2c809a46-3592-4a39-84e2-f7520c6e7bfe
 # ╟─f965c656-6b7b-441d-8111-855ecfe79ca6
 # ╟─f0fc9af7-737c-4c08-a772-1136be959a6d
 # ╟─a4e4c54b-cda4-43af-b9ae-b1f5337f5fd0
-# ╟─4a4c7d04-e9d3-4640-aaf6-cb62a759ee30
+# ╟─e00f7ffc-16dd-4e6f-ad85-74f6117eb958
+# ╟─09199e18-da64-4abb-8053-e3bc0448df8b
+# ╟─abf68ae8-2327-44eb-b0dc-24f66ae4f603
+# ╟─626cd1f0-b2d0-48e4-88ee-775e1f037480
 # ╟─d2f4bb2d-d222-4c61-9c63-a57bdfef1927
+# ╟─9e23b40c-e252-438f-a151-0e8c3d0d8271
 # ╟─53f5a5ca-201f-4aea-aa4c-fe82ae0249f2
 # ╟─4cde0527-defc-4901-bb4c-071bc115e102
 # ╟─c0830172-0889-44d7-8e1f-cb5699ca1052
