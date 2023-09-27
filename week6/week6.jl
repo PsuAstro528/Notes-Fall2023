@@ -100,6 +100,11 @@ md"""
   - E.g., preallocating a workspace to be used for auto-differentiation, integration, factoring a matrix, etc.
 """
 
+# ╔═╡ c8b93838-61ee-4c11-82de-e54a1d1b68af
+md"""
+## Garbage collection
+"""
+
 # ╔═╡ 5a733830-5b36-4198-ae24-2d8b92fafbdd
 blockquote(md"""
 Is there a way in Julia where we can easily identify memory that can be released or the program can automatically help us release memory?
@@ -109,53 +114,6 @@ Is there a way in Julia where we can easily identify memory that can be released
 md"""
 - That's the garbage collector's job.
 - But you can make it's just easier or harder.
-"""
-
-# ╔═╡ 2c809a46-3592-4a39-84e2-f7520c6e7bfe
-md"""
-## Other Questions
-"""
-
-# ╔═╡ c8b93838-61ee-4c11-82de-e54a1d1b68af
-md"""
-## Garbage collection
-"""
-
-# ╔═╡ f965c656-6b7b-441d-8111-855ecfe79ca6
-blockquote(md"""
-How does memory function from cell-to-cell within a notebook? Is it more efficient to split up code over many cells, or have them operate in the same one? How does this impact runtime and general performance?
-""")
-
-# ╔═╡ f0fc9af7-737c-4c08-a772-1136be959a6d
-md"""
-- It's more efficient to split up code into separate functions (regardless of whether they are in the same cell or not).
-- There might be a very slight latency cost of having lots of cells.  But that's unlikley significant unless you are making a really big notebook.
-"""
-
-# ╔═╡ d2cc4026-b2f0-4201-bf3b-c1615bbc9ab7
-blockquote(md"""
-What are the main causes of thrashing and how does Julia mitigate it? Specifically, how does Julia’s garbage collection reduce thrashing, if there even is a strong connection?
-""")
-
-# ╔═╡ fed62143-6d25-4d6a-927b-84f5d20fab0d
-md"""
-- Lots of small allocations on the heap
-- Java (probably the first "major" language to have garbage collection built-in) gave garbage collection a bad reputation because it only allows mutable user-defined types (and passes all objects by pointers), making it quite hard to avoid heap allocation of even very small objects.  
-- Julia (and C#) encourage the use of immutable types
-- Julia pass variables by reference (so they can pass variables on the stack)
-- C# passes variables by value by default (so they stay on stack, but often unnecessary stack allocations) and can pass by reference.
-"""
-
-# ╔═╡ a541ae26-c160-4549-af71-c4473f0eefb7
-blockquote(md"""
-How severe will thrashing be in a high-level language such as Julia? Should we worry about it immediately or only during optimization?
-""")
-
-# ╔═╡ 603442cb-fdd9-4551-b503-6af0dddc86d7
-md"""
-- Thrasing is a result of programming practices.
-- When you're a beginning programmer, focus on other things first.  Benchmark/profile to find inefficient code and then optimize.
-- As you gain more experience, you'll start to recognize places where thrashing could occur as you start to write them.  In that case, a little planning early on can save work down the road. 
 """
 
 # ╔═╡ 0969fdf8-9223-4e48-99f9-ef353d92fdb2
@@ -175,6 +133,48 @@ md"""
 - Test your code
 - `@time` or `@allocated` to count number/ammount of allocations.  Does it match what you expect?
 - In ProfileCanvas.jl, can use `@profview_allocs` to visually find functions/lines that allocate lots of memory (not necessarily a leak).
+"""
+
+# ╔═╡ a541ae26-c160-4549-af71-c4473f0eefb7
+blockquote(md"""
+How severe will thrashing be in a high-level language such as Julia? Should we worry about it immediately or only during optimization?
+""")
+
+# ╔═╡ 603442cb-fdd9-4551-b503-6af0dddc86d7
+md"""
+- Thrasing is a result of programming practices.
+- When you're a beginning programmer, focus on other things first.  Benchmark/profile to find inefficient code and then optimize.
+- As you gain more experience, you'll start to recognize places where thrashing could occur as you start to write them.  In that case, a little planning early on can save work down the road. 
+"""
+
+# ╔═╡ d2cc4026-b2f0-4201-bf3b-c1615bbc9ab7
+blockquote(md"""
+What are the main causes of thrashing and how does Julia mitigate it? Specifically, how does Julia’s garbage collection reduce thrashing, if there even is a strong connection?
+""")
+
+# ╔═╡ fed62143-6d25-4d6a-927b-84f5d20fab0d
+md"""
+- Lots of small allocations on the heap
+- Java (probably the first "major" language to have garbage collection built-in) gave garbage collection a bad reputation because it only allows mutable user-defined types (and passes all objects by pointers), making it quite hard to avoid heap allocation of even very small objects.  
+- Julia (and C#) encourage the use of immutable types
+- Julia pass variables by reference (so they can pass variables on the stack)
+- C# passes variables by value by default (so they stay on stack, but often unnecessary stack allocations) and can pass by reference.
+"""
+
+# ╔═╡ 2c809a46-3592-4a39-84e2-f7520c6e7bfe
+md"""
+## Other Questions
+"""
+
+# ╔═╡ f965c656-6b7b-441d-8111-855ecfe79ca6
+blockquote(md"""
+How does memory function from cell-to-cell within a notebook? Is it more efficient to split up code over many cells, or have them operate in the same one? How does this impact runtime and general performance?
+""")
+
+# ╔═╡ f0fc9af7-737c-4c08-a772-1136be959a6d
+md"""
+- It's more efficient to split up code into separate functions (regardless of whether they are in the same cell or not).
+- There might be a very slight latency cost of having lots of cells.  But that's unlikley significant unless you are making a really big notebook.
 """
 
 # ╔═╡ a4e4c54b-cda4-43af-b9ae-b1f5337f5fd0
@@ -230,6 +230,59 @@ array([2, 3, 4], dtype=int64)
 In [5]: %julia sum(py"[x**2 for x in arr]")
 Out[5]: 14
 ```
+"""
+
+# ╔═╡ 4cde0527-defc-4901-bb4c-071bc115e102
+md"## Data structures"
+
+# ╔═╡ c0830172-0889-44d7-8e1f-cb5699ca1052
+blockquote(md"""What [is] a linked list?...  how we might find it useful in our projects?""")
+
+# ╔═╡ 2ba07b9f-97b0-4ec3-90ae-bdf2b5616370
+md"""
+![Linked List](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Singly-linked-list.svg/640px-Singly-linked-list.svg.png)
+
+Use **array** when:
+- Know size at time of creation (or won't need to change size often)
+- Value fast access to elements (not just the beginning/end)
+- Value not allocating more memory than memory
+- Very common for scientific performance sensitive code
+
+Use **linked list** when:
+- Likely to insert elements and/or change size often
+- Don't mind taking longer to access elements (other than beginning/end)
+- Value not allocating (much) more memory than necessary
+- Useful for frequent sorting 
+
+Other common data structures to consider...
+"""
+
+# ╔═╡ 55ad7c5d-a8b4-4b35-bb0f-7784bc7f51c6
+md"""
+### **Hash table** (aka dictionary/`Dict`) when:
+- Elements unlikely to be accessed in any particular order
+- Value pretty fast access to individual elements
+- Don't mind allocating significantly more memory than necessary
+- Useful for scripting, non-performance sensitive code
+
+![Hash table](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Hash_table_3_1_1_0_1_0_0_SP.svg/1024px-Hash_table_3_1_1_0_1_0_0_SP.svg.png) - source [Wikimedia](https://commons.wikimedia.org/wiki/File:Hash_table_3_1_1_0_1_0_0_SP.svg), Jorge Stolfi, [CC-BY-SA-3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
+"""
+
+# ╔═╡ 6853e432-81b5-4761-9e7a-3c48c9867291
+md"""
+### Some form of **tree** when:
+- Elements have a meaningful order
+- Value fast adding/removing and searching of elements
+- Value not allocating (much) more memory than necessary
+- Don't mind taking longer to access individual elements
+- Willing to spend some time maintaing well-ordered tree
+- Common in database type applications
+
+#### Generic tree (not particularly useful) 
+![Unbalanced tree](https://upload.wikimedia.org/wikipedia/commons/a/a9/Unbalanced_binary_tree.svg) - source [Wikimedia](https://en.wikipedia.org/wiki/File:Unbalanced_binary_tree.svg)
+
+#### Balanced binary tree
+![Balanced tree](https://upload.wikimedia.org/wikipedia/commons/0/06/AVLtreef.svg) - source [Wikimedia](https://en.wikipedia.org/wiki/File:AVLtreef.svg)
 """
 
 # ╔═╡ e7736d75-ca00-4b63-90cb-b70f4a4f1a48
@@ -773,6 +826,11 @@ version = "17.4.0+0"
 # ╟─4a4c7d04-e9d3-4640-aaf6-cb62a759ee30
 # ╟─d2f4bb2d-d222-4c61-9c63-a57bdfef1927
 # ╟─53f5a5ca-201f-4aea-aa4c-fe82ae0249f2
+# ╟─4cde0527-defc-4901-bb4c-071bc115e102
+# ╟─c0830172-0889-44d7-8e1f-cb5699ca1052
+# ╟─2ba07b9f-97b0-4ec3-90ae-bdf2b5616370
+# ╟─55ad7c5d-a8b4-4b35-bb0f-7784bc7f51c6
+# ╟─6853e432-81b5-4761-9e7a-3c48c9867291
 # ╟─e7736d75-ca00-4b63-90cb-b70f4a4f1a48
 # ╟─ac33892a-64ca-412b-865d-cefe2be1df15
 # ╟─f508c1c8-945b-4b99-8985-5f10946b0239
