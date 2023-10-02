@@ -40,7 +40,7 @@ md"""
 # Admin Announcements
 ## Class Project
 ### [Peer Code Review](https://psuastro528.github.io/Fall2023/project/code_reviews/)
-- I can see GitHub repos for ~10 of you (as of Friday) who followed the link.  If you created a project repo independently, then send me the url today.
+- I can see GitHub repos for ~12 of you (as of Monday morning) who followed the link.  If you created a project repo independently, then send me the url today (and make sure @eford has permision to view it).
 - Give your reviewer access to your project repo:  
   - Your Repo URL → Settings → "Collaborators and Teams" → "Add People" → Enter their GitHub ID → Select Read  → "Add ID to repository"
 - Make sure you get accsess to the repo you're to review.
@@ -60,24 +60,57 @@ md"""
 - Welcome to submit your first parallelization earlier.  That might be a good idea, but it depends on your experience and your plans for second your parallelization. 
 """
 
+# ╔═╡ 137b43a3-8f6f-416d-aafa-8d76d0f5efca
+blockquote(md"""
+What is the most common issue you will run into when reviewing code, particularly at a beginner/novice level?
+""")
+
+# ╔═╡ 0042bc8f-2f25-423e-897c-53faa98afbb7
+md"""
+- It's hard to understand what the code is supposed to do.
+- Beginners often solve problems "the hard way", resulting in long-winded code.
+"""
+
 # ╔═╡ 0c70195c-c914-4eb8-a2fe-191f3072df8d
-question_box(md"""
+blockquote(md"""
 After addressing the reviewer's comments and making changes to the code accordingly, should there be another round of code review for the changes?
 """)
+
+# ╔═╡ 0b936e65-1ca6-4018-8481-3b6f4574d011
+md"""
+- Ideally, yes.  Software development is an iterative proecess.
+- However, it's not required for this class (just due to finite time).
+- In practice, it's up to you and your peer reviewer to decide whether you want to continue beyond this one assignment.
+"""
+
+# ╔═╡ b9e6c1bb-792b-4d89-9756-1fa19caada38
+blockquote(md"""One important aspect about HPC in astro is that the code not only tackles the computation, but it also considers science. [←**YES!**]
+
+How can we balance between focusing on code effciency and judging whether
+the science is correct when we review codes?
+""")
+
+# ╔═╡ 47b4a455-a19e-41bb-a1a2-a78eb3746957
+md"""
+- For assignments, please address both at least once. 
+- What is most useful will depend on the state of the code you're reviewing.  
+  - Readme may indicate the author's perception of what's most useful.
+  - Sometimes, developers can miss the forest for the trees, so...
+  - Use your judgment.  
+"""
 
 # ╔═╡ 23f6b690-2de5-4172-a381-d2ac4821adb2
 md"""
 # Parallel Programming:
 ## Why go parallel?
 ### Moore's Law
-![Moore's Law: Transistors](https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Moore%27s_Law_Transistor_Count_1970-2020.png/1280px-Moore%27s_Law_Transistor_Count_1970-2020.png)
+$(RobustLocalResource("https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Moore%27s_Law_Transistor_Count_1970-2020.png/1280px-Moore%27s_Law_Transistor_Count_1970-2020.png", "1280px-Moore%27s_Law_Transistor_Count_1970-2020.png", :height=>600, :alt=>"Moore's Law: Transistors"))
 [Wikimedia](https://commons.wikimedia.org/w/index.php?curid=98219918)
 By Max Roser, Hannah Ritchie -
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)
 
 ### Variations on Moore's Law
-![Variations on Moore's Law:
-](https://github.com/karlrupp/microprocessor-trend-data/raw/master/48yrs/48-years-processor-trend.png?raw=true)
+$(RobustLocalResource("https://github.com/karlrupp/microprocessor-trend-data/raw/master/48yrs/48-years-processor-trend.png?raw=true", "48-years-processor-trend.png", :height=>600, :alt=>"Variations on Moore's Law"))
 """
 
 # ╔═╡ 37dc3373-7ff6-4be1-a627-d3add210375c
@@ -140,9 +173,15 @@ md"# Parallelizing for shared-memory systems"
 # ╔═╡ 7bfb73cc-e585-44b8-9c15-8bb439ad3ca3
 md"""
 > **Q:**  Do compilers parallelize automatically?  
-- Some libraries are parallelized (e.g., BLAS for linear algebra)
+Some libraries for common mathematical operations are already parallelized, e.g.,
+- BLAS for linear algebra
+- FFTs
+- Ensemble MCMC algorithms
+- Ensemble nested sampling
+- Many more
 
-### What can compilers parallelize with some help?
+> **Q:** What can compilers parallelize with our help?
+Simple `for` loops
 - Parallel languages (e.g., Fortran >=90)
 - Language extensions (e.g., OpenMP for C/C++ or Fortran)
 - Declarative languages (potentially)
@@ -151,12 +190,12 @@ md"""
 # ╔═╡ 9880bae4-9722-48a2-a08a-c8ec87b9866f
 md"""
 ## Programming language extensions/Libraries for parallelizing C/C++ or Fortran
-- Shared Memory
-   - [OpenMP](https://www.openmp.org/):  
+### Shared Memory
+- [OpenMP](https://www.openmp.org/):  
       - Good for parallelizing a few key loops
       - Can scale to 48 cores (on Roar Collab's standard nodes), 80 cores (on Roar Collab's basic nodes),  ~128 cores on special hardware
       - Jobs requesting more cores within one node can take longer to start on clusters that allow jobs to share a node (e.g., Roar Collab)
-- Shared or Distributed Memory
+### Shared or Distributed Memory
    - [MPI](https://www.open-mpi.org/):
       - Good for more complex problems with frequent communications (e.g., PDEs)
       - Allowing cores to be spread over different compute nodes can allow jobs to start faster.
@@ -171,6 +210,26 @@ md"""
    - [OpenCL](https://www.khronos.org/opencl/) multiple hardware accelerators (but typically AMD and Intel)
    - [OpenACC](https://www.openacc.org/) multiple hardware accelerators, analogous to OpenMP
 
+"""
+
+# ╔═╡ a78ea06f-93c9-4fab-b9ec-7856f1090e7f
+md"""
+## Syntax Examples for C/C++ & Fortran
+"""
+
+# ╔═╡ 50911dbe-ecfd-41f1-a121-c7abbf612cff
+blockquote(md"""
+What are your best tips for effectively reviewing code in a language we may not be experts in or extremely familiar with the specifics of?
+""")
+
+# ╔═╡ 7849a011-034e-4705-bb9d-ad8f0b85eb9f
+md"""
+- If you work for a company, they may mandate that everyone use a certain language, libraries, formatting style, testing framework, documentation generator, etc.
+- Often in science, we have more freedom to choose how we do our work.
+- For some large astronomical collaborations, you might be encouraged/expected to use what most of the team has been using.  
+- However, if you're in multiple collaborations (as is common), then you'll almost certainly encounter different languages and conventions.   
+- Therefore, working competently in multiple languages is a useful life skill.
+- While we can't expect everyone to be an expert in every language, well-written code is often practical to "read" even for non-experts.
 """
 
 # ╔═╡ 132a7e26-c976-4181-adbe-9a2d80d119bb
@@ -198,7 +257,7 @@ enddo
 
 # ╔═╡ bed74901-e20d-44c5-91db-63f47619a3ce
 md"""
-## Compiling & Running OpenMP code
+### Compiling & Running OpenMP code
 ```sh
 gcc -lm -Ofast -fopenmp -o executable source.c
 or
@@ -227,7 +286,7 @@ function multithreading_example_builtin(input::AbstractArray, func::Function)
 end;
 
 # ╔═╡ 82ba9cd0-a170-4c51-8576-cdcde60d7427
-md"### Warning:  Execution order not guarenteed"
+md"### Warning:  Execution order is *not* guarenteed!"
 
 # ╔═╡ 2a7fee7f-deea-4eaa-8199-be2270b3856c
 function multithreading_example_dangerous!(output::AbstractArray, input::AbstractArray, func::Function)
@@ -267,23 +326,23 @@ function multithreading_example_flloop(input::AbstractArray, func::Function; ex:
 end
 
 # ╔═╡ 72e62a75-94a9-4013-8a00-411dd542a070
-test_input = rand(512,512);
+test_input = rand(1024,1024);
 
 # ╔═╡ f5542fdf-b1ab-454a-b78c-84c08ae21a8f
 let
-	multithreading_example_builtin($test_input,sqrt)
-	@belapsed multithreading_example_builtin($test_input,sqrt)
+	multithreading_example_builtin(test_input,sqrt)
+	@belapsed multithreading_example_builtin($test_input,$sqrt)
 end
 
 # ╔═╡ 52ba553e-0204-4ac6-92d7-f97c06706a44
 let
-	multithreading_example_threadsX_foreach($test_input,sqrt)
-	@belapsed multithreading_example_threadsX_foreach($test_input,sqrt)
+	multithreading_example_threadsX_foreach(test_input,sqrt, basesize=256)
+	@belapsed multithreading_example_threadsX_foreach($test_input,$sqrt, basesize=64)
 end
 
 # ╔═╡ 524597db-3acb-4cb4-b072-23fd03cebfe0
 let
-	multithreading_example_flloop($test_input,sqrt)
+	multithreading_example_flloop(test_input,sqrt)
 	@belapsed multithreading_example_flloop($test_input,sqrt)
 end
 
@@ -296,13 +355,13 @@ Otherwise (e.g., if you login via ssh, RemoteDesk or submit a job via Slurm), th
 With bash shell:
 ```shell
 export JULIA_NUM_THREADS=4             
-export JULIA_NUM_THREADS=$SLURM_TASKS_PER_NODE # if within Slurm job
+export JULIA_NUM_THREADS=$SLURM_CPUS_PER_TASK # if within Slurm job
 julia
 ```
 With csh shells
 ```shell
 setenv JULIA_NUM_THREADS 4
-setenv JULIA_NUM_THREADS $SLURM_TASKS_PER_NODE # if within Slurm job
+setenv JULIA_NUM_THREADS $SLURM_CPUS_PER_TASK # if within Slurm job
 julia
 ```
 """
@@ -323,8 +382,8 @@ md"""
 """
 
 # ╔═╡ 7b33737d-31ea-41d6-b230-1815d4d5c18a
-function demo(executor)
-    @floop executor for x in 1:100_000
+function demo(data, executor)
+    @floop executor for x in data # 1:100_000
         @reduce(s += x)
     end
     return s
@@ -333,26 +392,26 @@ end;
 # ╔═╡ 51e26f2b-60e3-4524-8038-26823e4ea7b6
 let
 	executor = SequentialEx()
-	demo(executor)
-	@belapsed demo($executor)
+	demo(test_input,executor)
+	@belapsed demo($test_input,$executor)
 end
 
 # ╔═╡ fefaa400-fcf9-4dbd-8283-e7ac3cebbd69
 let
 	executor = ThreadedEx()
-	demo(executor)
-	@belapsed demo($executor)
+	demo(test_input,executor)
+	@belapsed demo($test_input,$executor)
 end
 
 # ╔═╡ c63760cc-d814-462b-ab1f-9607e9d08662
 let
-	executor = ThreadedEx(basesize = 64)
-	demo(executor)
-	@belapsed demo($executor)
+	executor = ThreadedEx(basesize = 1024)
+	demo(test_input,executor)
+	@belapsed demo($test_input,$executor)
 end
 
 # ╔═╡ bbf23120-4e11-4d78-99dd-eed50d428369
-#demo(DistributedEx(threads_basesize = 64))
+#demo(test_input, DistributedEx(threads_basesize = 64))
 
 # ╔═╡ 19ff1945-5ac3-4d19-b5ef-ad1553a26a00
 md"""## Growing into parallelism with [KernelAbstractions.jl](https://github.com/JuliaGPU/KernelAbstractions.jl)"""
@@ -384,6 +443,37 @@ end
 
 # ╔═╡ 2e7fd3ae-2e85-4268-a502-65924287f194
 @belapsed $launch_multithreading_example_kernel_abstractions($device_cpu,$test_input,$sqrt; worksize=64)
+
+# ╔═╡ f27d5486-f9c8-4c4d-959d-1408709a4a3a
+md"""
+Packages providing access to common hardware accelerators:
+- [GPUArrays.jl](https://github.com/JuliaGPU/GPUArrays.jl) (for generic array interface)
+- [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl) (NVIDIA GPUs)
+- [AMDGPU.jl](https://github.com/JuliaGPU/AMDGPU.jl) (AMD GPUs)
+- [oneAPIKernels](https://github.com/JuliaGPU/oneAPI.jl) (Intel GPUs)
+"""
+
+# ╔═╡ b0822137-4f9f-4f94-a55d-70b4ed24b162
+md"""
+```julia
+using CUDAKernels # Required to access CUDABackend for NVIDIA GPUs
+A = CuArray(ones(1024, 1024))
+
+using ROCKernels # Required to access CUDABackend for AMD GPUs
+A = ROCArray(ones(1024, 1024))
+
+using oneAPIKernels # Required to access CUDABackend for Intel GPUs
+A = oneArray(ones(1024, 1024))
+```
+The kernel generation and execution are then
+
+```julia
+backend = CUDABackend()
+mul2_kernel(backend, 64)(A, ndrange=size(A))
+synchronize(backend)
+all(A .== 2.0)
+```
+"""
 
 # ╔═╡ 6cda9adb-30ce-4f18-9750-cde4abeee92b
 md"""## Pros & Cons of Julia's multithreading options
@@ -1922,7 +2012,12 @@ version = "1.4.1+1"
 # ╟─9c6c8c33-efe5-45ee-8a6c-1633a763e220
 # ╟─da037dd2-2833-45eb-9eed-f3c8de3b5339
 # ╟─bb5e3a7f-283a-41ad-934d-f88847067d57
-# ╠═0c70195c-c914-4eb8-a2fe-191f3072df8d
+# ╟─137b43a3-8f6f-416d-aafa-8d76d0f5efca
+# ╟─0042bc8f-2f25-423e-897c-53faa98afbb7
+# ╟─0c70195c-c914-4eb8-a2fe-191f3072df8d
+# ╟─0b936e65-1ca6-4018-8481-3b6f4574d011
+# ╟─b9e6c1bb-792b-4d89-9756-1fa19caada38
+# ╟─47b4a455-a19e-41bb-a1a2-a78eb3746957
 # ╟─23f6b690-2de5-4172-a381-d2ac4821adb2
 # ╟─37dc3373-7ff6-4be1-a627-d3add210375c
 # ╟─9f3a204c-88eb-4b9d-8e67-de78cef6deaa
@@ -1933,6 +2028,9 @@ version = "1.4.1+1"
 # ╟─7bfb73cc-e585-44b8-9c15-8bb439ad3ca3
 # ╟─9880bae4-9722-48a2-a08a-c8ec87b9866f
 # ╟─78c0e28b-f22b-4bfb-9554-96cb973eb670
+# ╟─a78ea06f-93c9-4fab-b9ec-7856f1090e7f
+# ╟─50911dbe-ecfd-41f1-a121-c7abbf612cff
+# ╟─7849a011-034e-4705-bb9d-ad8f0b85eb9f
 # ╟─132a7e26-c976-4181-adbe-9a2d80d119bb
 # ╟─b581852f-1b08-4d5a-9143-0d044df3d62e
 # ╟─bed74901-e20d-44c5-91db-63f47619a3ce
@@ -1943,7 +2041,7 @@ version = "1.4.1+1"
 # ╟─82ba9cd0-a170-4c51-8576-cdcde60d7427
 # ╠═2a7fee7f-deea-4eaa-8199-be2270b3856c
 # ╟─15a7b856-4b90-4aee-94b6-f894b43c4831
-# ╟─08f14f66-112f-4598-be8e-bae5faafb36d
+# ╠═08f14f66-112f-4598-be8e-bae5faafb36d
 # ╟─328859f0-1173-4175-b746-f5f6d2617161
 # ╠═dd04d4ed-c785-4566-97e7-074f54cf6aa7
 # ╠═72e62a75-94a9-4013-8a00-411dd542a070
@@ -1964,6 +2062,8 @@ version = "1.4.1+1"
 # ╠═5bd55abf-0326-4ae2-9c64-de7f32330f64
 # ╠═0daf9369-caa0-42f4-92fb-e16cb8b0c660
 # ╠═2e7fd3ae-2e85-4268-a502-65924287f194
+# ╟─f27d5486-f9c8-4c4d-959d-1408709a4a3a
+# ╟─b0822137-4f9f-4f94-a55d-70b4ed24b162
 # ╟─6cda9adb-30ce-4f18-9750-cde4abeee92b
 # ╟─5f263d46-221a-4c72-b44d-7628c148d770
 # ╟─763403e4-c3aa-4077-b8c7-4df02fb1c18a
