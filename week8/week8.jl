@@ -14,11 +14,11 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 79accce8-6f2e-4daa-b0d1-690ff6fcfc67
-using Memoize
-
 # ╔═╡ 8e7973b9-cb7a-42ef-bbd8-bae976ac66b1
 using ThreadsX
+
+# ╔═╡ 79accce8-6f2e-4daa-b0d1-690ff6fcfc67
+using Memoize
 
 # ╔═╡ 7a719a71-7e36-4e89-a3c7-f52788c501c1
 using Plots
@@ -45,6 +45,347 @@ TableOfContents(aside=toc_aside)
 md"""
 # Week 8 Discussion & Q&A:  Parallelization (continued)
 """
+
+# ╔═╡ c81b1a95-e8cd-4936-b398-334688100f18
+md"# When to parallelize?"
+
+# ╔═╡ 4dbce3d8-5cf5-48f0-af62-787701a2cc82
+md"""
+## Considerations for what code to parallelize
+- Enough work elements to be worth parallelizing
+- Computationally intensive
+- Ratio of computation to memory accesses
+- How much/often is communicaitons between processor needed?
+"""
+
+# ╔═╡ 873791ba-de27-4097-8903-9a450c7bd44c
+md"# Strong & Weak Scaling"
+
+# ╔═╡ 89e2bf55-fe61-4c9d-8e6b-ce1356c8b7a6
+md"""
+- Strong scaling:  How speed-up factor improves with more workers at fixed problem size
+- Weak scaling:  How speed-up factor improves when the number of workers and problem size increase together
+"""
+
+# ╔═╡ 98017585-6cfc-4ae4-9f5b-9775c0eb406f
+md"""
+## Amdahl's Law & Strong Scaling
+![Amdahl's Law: Speed up factor for fixed workload](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/AmdahlsLaw.svg/983px-AmdahlsLaw.svg.png)
+- Credit: Wikipedia [Daniels220](https://en.wikipedia.org/wiki/User:Daniels220) [CC SAS 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
+"""
+
+# ╔═╡ 3750558c-d86c-461c-afc7-cfa8e4d330ad
+md"""
+### Amhdal's Law (best-case strong scaling)
+$$S_{\text{latency}}(s)={\frac {1}{(1-p)+{\frac {p}{s}}}}$$
+
+- theoretical speedup of the execution of the whole task ($S_{\mathrm{latency}}$)
+- speedup of the part of the task that benefits from improved system resources ($s$),
+- proportion of execution time that the part benefiting from improved resources originally occupied ($p$).
+
+"""
+
+# ╔═╡ 0a5987aa-d40e-44f7-b75c-722a2436f7f9
+md"""
+### Derivation of Amhdal's Law
+Execution time before parallelization ($T$)
+
+$$T = (1-p) T + p T$$
+
+Execution time after increasing resources ($T(s)$)
+
+$$T(s) = (1-p) T + \frac{p}{s} T$$
+
+Speed-up factor ($S$)
+
+$$S = \frac{T}{T(s)} = \frac{1}{(1-p) + \frac{p}{s}}$$
+"""
+
+# ╔═╡ d61f4dbb-7181-4542-97ca-48a8fe7dd87a
+md"""
+## Ideal scaling
+- Number of processor cores ($N$)
+$s = N$
+
+## Real-world scaling
+- Additional fixed work to enable parallelization 
+- Additional marginal cost of parallelization 
+$s \le N$
+
+"""
+
+# ╔═╡ f0132ca2-b1ce-413f-8653-f2d86206f99e
+md"""
+## Gustafson's Law & Weak Scaling
+![Gustafson's Law:  Speed up factor for increasing workload](https://upload.wikimedia.org/wikipedia/commons/d/d7/Gustafson.png)
+- Credit: Wikipedia [Peahihawaii](https://commons.wikimedia.org/w/index.php?title=User:Peahihawaii&action=edit&redlink=1)  [CC SAS 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
+"""
+
+# ╔═╡ 498928cd-95ed-48a9-9232-89f959f5c88a
+md"""
+### Gustafson's Law (best-case weak scaling)
+$$S_{\text{latency}}(s)=1-p+sp$$
+
+"""
+
+# ╔═╡ f9b69aeb-5fc8-46f0-a80b-48e5246e0cb9
+md"""
+### Derivation of Gustafson's Law
+Workload before increasing resources ($W$)
+
+$$W = (1-p)  W + p W$$
+
+Workload after increasing resources ($W(s)$)
+
+$$W(s) = (1-p) W + s p W$$
+
+Speed-up factor ($S$)
+
+$$S = \frac{W(s)}{W} = (1-p) + s p = 1 + p (s-1)$$
+"""
+
+# ╔═╡ ca5ac963-b6fe-43fc-b082-c91c0542b8cf
+md"""
+### Which is relevant for my problem?
+- When do we care about strong scaling?
+- When do we care about weak scaling?
+"""
+
+# ╔═╡ 1a39e7c8-6925-4340-8961-1480f6df64d6
+function benchmark_me(i::Integer; A::Array, x::Array)
+	@assert 1 <= i <= size(A,3)
+	@assert size(A,2) == size(x,1)
+	@elapsed @fastmath @inbounds view(A,:,:,i)\view(x,:,i)
+end
+
+# ╔═╡ aa7eba99-0cfb-4d05-a9ef-d084a2991a2c
+function calc_speedups_strong(nrows, ncols, npages)
+	A_list = randn(nrows,ncols,npages)
+	x_list = randn(nrows,npages)
+	runtimes = map(nthreads -> 
+			(@belapsed ThreadsX.map(i->benchmark_me(i,A=$A_list,x=$x_list),1:$npages,
+				basesize=ceil(Int64,size($A_list,3)//$nthreads) 
+				) samples=100 evals=5), 
+			1:Threads.nthreads() )
+	runtime_serial = first(runtimes)
+	speedup_strong = runtime_serial./runtimes
+end
+
+# ╔═╡ 4c8ea632-b824-4227-8e92-3b7a92052525
+begin
+	nrows_strong1 = 32
+	ncols_strong1 = 32
+end;
+
+# ╔═╡ a2def1e6-8fcb-4799-a836-9a13b4748c4e
+begin
+	runtimes_strong1_16 = calc_speedups_strong(nrows_strong1,ncols_strong1,16)
+	runtimes_strong1_64 = calc_speedups_strong(nrows_strong1,ncols_strong1,64)
+	runtimes_strong1_256 = calc_speedups_strong(nrows_strong1,ncols_strong1,256)
+	runtimes_strong1_1024 = calc_speedups_strong(nrows_strong1,ncols_strong1,1024)
+end;
+
+# ╔═╡ b558ad50-08b5-4ae8-a952-98fb1a618c1c
+begin
+	nrows_strong2 = 64
+	ncols_strong2 = 64
+end;
+
+# ╔═╡ d0331007-a78f-436f-a517-f7268a1bf6f8
+begin
+	runtimes_strong2_16 = calc_speedups_strong(nrows_strong2,ncols_strong2,16)
+	runtimes_strong2_64 = calc_speedups_strong(nrows_strong2,ncols_strong2,64)
+	runtimes_strong2_256 = calc_speedups_strong(nrows_strong2,ncols_strong2,256)
+	#runtimes_strong2_1024 = calc_speedups(nrows_strong2,ncols_strong2,1024)
+end;
+
+# ╔═╡ a8d292f1-e54c-45e9-b09e-be8100c40a58
+md"## Strong scaling of dense matrix solve" 
+
+# ╔═╡ dc124d75-c372-4703-84e9-e4bd464994d6
+let 
+	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
+	scatter!(1:Threads.nthreads(), runtimes_strong2_16, label="($nrows_strong2 x $ncols_strong2)x16",color=1)
+	plot!(1:Threads.nthreads(), runtimes_strong2_16,label=:none,color=1)
+	scatter!(1:Threads.nthreads(), runtimes_strong2_64, label="($nrows_strong2 x $ncols_strong2)x64",color=2)
+	plot!(1:Threads.nthreads(), runtimes_strong2_64,label=:none,color=2)
+	scatter!(1:Threads.nthreads(), runtimes_strong2_256, label="($nrows_strong2 x $ncols_strong2)x256", color=3)
+	plot!(1:Threads.nthreads(), runtimes_strong2_256, label=:none,color=3)
+	#scatter!(1:Threads.nthreads(), first(runtimes_strong2_1024)./runtimes_strong2_1024, label="($nrows_strong2 x $ncols_strong2)x1024",color=4)
+	#plot!(1:Threads.nthreads(), first(runtimes_strong2_1024)./runtimes_strong2_1024,label=:none, color=4)
+	
+	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
+end
+
+# ╔═╡ bdb82d77-579b-439c-8418-a6ba301b3fc9
+let 
+	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
+	scatter!(1:Threads.nthreads(), runtimes_strong1_16, label="($nrows_strong1 x $ncols_strong1)x16",color=1)
+	plot!(1:Threads.nthreads(), runtimes_strong1_16,label=:none,color=1)
+	scatter!(1:Threads.nthreads(), runtimes_strong1_64, label="($nrows_strong1 x $ncols_strong1)x64",color=2)
+	plot!(1:Threads.nthreads(), runtimes_strong1_64,label=:none,color=2)
+	scatter!(1:Threads.nthreads(), runtimes_strong1_256, label="($nrows_strong1 x $ncols_strong1)x256", color=3)
+	plot!(1:Threads.nthreads(), runtimes_strong1_256, label=:none,color=3)
+	scatter!(1:Threads.nthreads(), runtimes_strong1_1024, label="($nrows_strong1 x $ncols_strong1)x1024",color=4)
+	plot!(1:Threads.nthreads(), runtimes_strong1_1024,label=:none, color=4)
+	
+	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
+end
+
+# ╔═╡ 7cd7ea26-ded7-4f73-b56a-4b24bdfc4449
+md"## Weak scaling of dense matrix solve" 
+
+# ╔═╡ 4257a1f5-2697-4849-9f90-d0f94c3145ff
+begin
+	nrows_weak1 = 32
+	ncols_weak1 = 32
+end;
+
+# ╔═╡ 880c72dd-4a37-44e7-b7eb-e73faf9b40a3
+function calc_speedups_weak(nrows, ncols, npages)
+	A_list = randn(nrows,ncols,npages)
+	x_list = randn(nrows,npages)
+	runtimes = map(nthreads -> 
+			(@belapsed ThreadsX.map(i->benchmark_me(i,A=$A_list,x=$x_list),1:(floor(Int64,$npages//Threads.nthreads())*$nthreads),
+				basesize=ceil(Int64,(floor(Int64,$npages//Threads.nthreads())*$nthreads)//$nthreads) 
+				) samples=100 evals=5), 
+			1:Threads.nthreads() )
+	runtimes_serial = map(nthreads -> 
+			(@belapsed map(i->benchmark_me(i,A=$A_list,x=$x_list),1:(floor(Int64,$npages//Threads.nthreads())*$nthreads)) samples=100 evals=1), 	
+		1:Threads.nthreads() )
+	speedup_weak = runtimes_serial./runtimes
+end
+
+# ╔═╡ bdc51a99-0298-4bc7-8780-6f9542138524
+begin
+	runtimes_weak1_16 = calc_speedups_weak(nrows_weak1,ncols_weak1,16)
+	runtimes_weak1_64 = calc_speedups_weak(nrows_weak1,ncols_weak1,64)
+	runtimes_weak1_256 = calc_speedups_weak(nrows_weak1,ncols_weak1,256)
+	runtimes_weak1_1024 = calc_speedups_weak(nrows_weak1,ncols_weak1,1024)
+end;
+
+# ╔═╡ 6130a5f8-77b0-4a5e-8e87-4db1887328c8
+let 
+	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
+	scatter!(1:Threads.nthreads(), runtimes_weak1_16, label="($nrows_weak1 x $ncols_weak1)x2N",color=1)
+	plot!(1:Threads.nthreads(), runtimes_weak1_16,label=:none,color=1)
+	scatter!(1:Threads.nthreads(), runtimes_weak1_64, label="($nrows_weak1 x $ncols_weak1)x16N",color=2)
+	plot!(1:Threads.nthreads(), runtimes_weak1_64,label=:none,color=2)
+	scatter!(1:Threads.nthreads(), runtimes_weak1_256, label="($nrows_weak1 x $ncols_weak1)x64N", color=3)
+	plot!(1:Threads.nthreads(), runtimes_weak1_256, label=:none,color=3)
+	scatter!(1:Threads.nthreads(), runtimes_weak1_1024, label="($nrows_weak1 x $ncols_weak1)x256N",color=4)
+	plot!(1:Threads.nthreads(), runtimes_weak1_1024,label=:none, color=4)
+	
+	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
+end
+
+# ╔═╡ f42f0871-55e0-4d81-be20-2ff26cefa93a
+md"""
+# Considerations for how to parallelize code
+- How many tasks do you have to parallelize?
+- How long does each task require?
+- What is most time consuming part of task?  (e.g., arithmetic, memory access, loading from disk)
+- How similar is time required for each task?
+- What architecture do you plan to use for your second parallelization?
+  + What's the maximum number of processors that you might want to parallelize over?
+  + How much communications is required between workers
+"""
+
+# ╔═╡ f3165718-746e-431d-9e2d-e1ce39722d4d
+md"""
+## Parallel Architectures
+- Shared Memory (Lab 6)
+- Distributed Memory (Lab 7)
+- Hardware Accelerator (Lab 8)
+"""
+
+# ╔═╡ 76792744-89ca-4387-99d2-bc11268ce863
+blockquote(md"""
+What is the benefit of using distributed memory over shared memory?
+""")
+
+# ╔═╡ 0cf062cb-8955-4ca4-a925-d786b640c4a3
+md"""
+### When to parallelize?
+"""
+
+# ╔═╡ 85131ae5-5cc4-4923-ae8e-d3d424a77370
+blockquote(md"""
+Is there ever a case where parallelization is not worth it?
+...
+Can [it] actually be worse than the serial version of a code?
+""")
+
+# ╔═╡ 5dbc0006-9cd8-4fbc-9828-98df1d335d5c
+md"""
+- Existing code is fast enough
+- Significant fraciton of work can not be parallelized (e.g., disk access, querying server)
+- Paralleling accurately would take too much human time
+
+Yes!
+- Parallelizing requires extensive communications between workers
+"""
+
+# ╔═╡ 9a0a095c-2de1-4020-862b-3135afff980b
+blockquote(md"""
+Do initiliazing cores and sending tasks in embarassingly parallel take a long time?
+""")
+
+# ╔═╡ aac0c46d-c0f9-49d4-9ab6-6855dca6514e
+md"""
+It depends.  Long compared to what?
+"""
+
+# ╔═╡ 749888bc-511c-40f3-babe-2ebaa7e327c1
+hint(md"""Time required to:
+- Send input data to each worker
+- Perform calculations on each worker
+- Send output data back to delegator
+
+""")
+
+# ╔═╡ e104b575-9844-4be4-976a-d7854ae58352
+blockquote(md"""
+For code that needs [significant] communication between tasks, how much slower will it be to run in parallel [relative] to a code that needs little to no communication? 
+""") 
+# Is it more worth it to rework the code to have a task to run in parallel that needs little communication?
+
+# ╔═╡ e2305ed1-2ea1-4abb-ba84-fcae1b92b3be
+blockquote(md"""
+What is the bottom/upper limit where parallelizing it isn't going to make much of a difference in performance? 
+
+Does this depend heavily on the manufacturing type of the cores (ignoring how memory is set up between cores)?
+""")
+
+# ╔═╡ e6e5b855-7e4f-4060-ad81-b55c42232740
+blockquote(md"""
+[Is it] appropriate to parallelize the following things:
+- When doing a simple arithmetic calculation over each element of a large sample (ex: if x is a large array, x += 1)
+- When doing a more complex arithmetic calculation over each element of a large sample (ex: cos.(x), sincos.(x))
+- Calculation that involves taking measurement of a sample (ex: mean(x), sum(x), maximum(x))
+""")
+
+# ╔═╡ 7b8d34c3-02ef-496c-b409-3472c7a7c00f
+md"""
+### What programming model to use?
+"""
+
+# ╔═╡ 01ef4fbb-ef4a-4627-bf3a-1a544a176dc0
+blockquote(md"""
+What combinations of programming models in the hybrid model are most effective?
+""")
+
+# ╔═╡ af03c759-27e1-4a60-82ef-c8063ddcaafb
+blockquote(md"""
+How can we know which programming model to use for a particular case?
+""")
+
+# ╔═╡ f9bf31c3-6794-4eea-a3da-b6010ee77182
+blockquote(md"""
+Suppose using a GPU can provide x100 speedup compared to a CPU core, and using 100 CPU cores can also achieve the same speed up...
+
+Why not use 100 CPUs? Other than the cost of one GPU vs. 100 CPUs, what are other pros and cons of using a GPU vs. many CPUs?
+""")
 
 # ╔═╡ 33fcbd8e-7ff0-48c8-8846-740daf5e437f
 md"""
@@ -219,306 +560,6 @@ end
 
 """
 
-# ╔═╡ c81b1a95-e8cd-4936-b398-334688100f18
-md"# When to parallelize?"
-
-# ╔═╡ 4dbce3d8-5cf5-48f0-af62-787701a2cc82
-md"""
-## Considerations for what code to parallelize
-- Enough work elements to be worth parallelizing
-- Computationally intensive
-- Ratio of computation to memory accesses
-- How much/often is communicaitons between processor needed?
-"""
-
-# ╔═╡ 873791ba-de27-4097-8903-9a450c7bd44c
-md"# Strong & Weak Scaling"
-
-# ╔═╡ 89e2bf55-fe61-4c9d-8e6b-ce1356c8b7a6
-md"""
-- Strong scaling:  How speed-up factor improves with more workers at fixed problem size
-- Weak scaling:  How speed-up factor improves when the number of workers and problem size increase together
-"""
-
-# ╔═╡ 98017585-6cfc-4ae4-9f5b-9775c0eb406f
-md"""
-## Amdahl's Law & Strong Scaling
-![Amdahl's Law: Speed up factor for fixed workload](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/AmdahlsLaw.svg/983px-AmdahlsLaw.svg.png)
-- Credit: Wikipedia [Daniels220](https://en.wikipedia.org/wiki/User:Daniels220) [CC SAS 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
-"""
-
-# ╔═╡ 3750558c-d86c-461c-afc7-cfa8e4d330ad
-md"""
-### Amhdal's Law (best-case strong scaling)
-$$S_{\text{latency}}(s)={\frac {1}{(1-p)+{\frac {p}{s}}}}$$
-
-- theoretical speedup of the execution of the whole task ($S_{\mathrm{latency}}$)
-- speedup of the part of the task that benefits from improved system resources ($s$),
-- proportion of execution time that the part benefiting from improved resources originally occupied ($p$).
-
-"""
-
-# ╔═╡ 0a5987aa-d40e-44f7-b75c-722a2436f7f9
-md"""
-### Derivation of Amhdal's Law
-Execution time before parallelization ($T$)
-
-$$T = (1-p) T + p T$$
-
-Execution time after increasing resources ($T(s)$)
-
-$$T(s) = (1-p) T + \frac{p}{s} T$$
-
-Speed-up factor ($S$)
-
-$$S = \frac{T}{T(s)} = \frac{1}{(1-p) + \frac{p}{s}}$$
-"""
-
-# ╔═╡ d61f4dbb-7181-4542-97ca-48a8fe7dd87a
-md"""
-## Ideal scaling
-- Number of processor cores ($N$)
-$s = N$
-
-## Real-world scaling
-- Additional fixed work to enable parallelization 
-- Additional marginal cost of parallelization 
-$s \le N$
-
-"""
-
-# ╔═╡ f0132ca2-b1ce-413f-8653-f2d86206f99e
-md"""
-## Gustafson's Law & Weak Scaling
-![Gustafson's Law:  Speed up factor for increasing workload](https://upload.wikimedia.org/wikipedia/commons/d/d7/Gustafson.png)
-- Credit: Wikipedia [Peahihawaii](https://commons.wikimedia.org/w/index.php?title=User:Peahihawaii&action=edit&redlink=1)  [CC SAS 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
-"""
-
-# ╔═╡ 498928cd-95ed-48a9-9232-89f959f5c88a
-md"""
-### Gustafson's Law (best-case weak scaling)
-$$S_{\text{latency}}(s)=1-p+sp$$
-
-"""
-
-# ╔═╡ f9b69aeb-5fc8-46f0-a80b-48e5246e0cb9
-md"""
-### Derivation of Gustafson's Law
-Workload before increasing resources ($W$)
-
-$$W = (1-p)  W + p W$$
-
-Workload after increasing resources ($W(s)$)
-
-$$W(s) = (1-p) W + s p W$$
-
-Speed-up factor ($S$)
-
-$$S = \frac{W(s)}{W} = (1-p) + s p = 1 + p (s-1)$$
-"""
-
-# ╔═╡ ca5ac963-b6fe-43fc-b082-c91c0542b8cf
-md"""
-### Which is relevant for my problem?
-- When do we care about strong scaling?
-- When do we care about weak scaling?
-"""
-
-# ╔═╡ 1a39e7c8-6925-4340-8961-1480f6df64d6
-function benchmark_me(i::Integer; A::Array, x::Array)
-	@assert 1 <= i <= size(A,3)
-	@assert size(A,2) == size(x,1)
-	@elapsed @fastmath @inbounds view(A,:,:,i)\view(x,:,i)
-end
-
-# ╔═╡ aa7eba99-0cfb-4d05-a9ef-d084a2991a2c
-function calc_speedups_strong(nrows, ncols, npages)
-	A_list = randn(nrows,ncols,npages)
-	x_list = randn(nrows,npages)
-	runtimes = map(nthreads -> 
-			(@belapsed ThreadsX.map(i->benchmark_me(i,A=$A_list,x=$x_list),1:$npages,
-				basesize=ceil(Int64,size($A_list,3)//$nthreads) 
-				) samples=100 evals=5), 
-			1:Threads.nthreads() )
-	runtime_serial = first(runtimes)
-	speedup_strong = runtime_serial./runtimes
-end
-
-# ╔═╡ 880c72dd-4a37-44e7-b7eb-e73faf9b40a3
-function calc_speedups_weak(nrows, ncols, npages)
-	A_list = randn(nrows,ncols,npages)
-	x_list = randn(nrows,npages)
-	runtimes = map(nthreads -> 
-			(@belapsed ThreadsX.map(i->benchmark_me(i,A=$A_list,x=$x_list),1:(floor(Int64,$npages//Threads.nthreads())*$nthreads),
-				basesize=ceil(Int64,(floor(Int64,$npages//Threads.nthreads())*$nthreads)//$nthreads) 
-				) samples=100 evals=5), 
-			1:Threads.nthreads() )
-	runtimes_serial = map(nthreads -> 
-			(@belapsed map(i->benchmark_me(i,A=$A_list,x=$x_list),1:(floor(Int64,$npages//Threads.nthreads())*$nthreads)) samples=100 evals=1), 	
-		1:Threads.nthreads() )
-	speedup_weak = runtimes_serial./runtimes
-end
-
-# ╔═╡ 4c8ea632-b824-4227-8e92-3b7a92052525
-begin
-	nrows_strong1 = 32
-	ncols_strong1 = 32
-end;
-
-# ╔═╡ a2def1e6-8fcb-4799-a836-9a13b4748c4e
-begin
-	runtimes_strong1_16 = calc_speedups_strong(nrows_strong1,ncols_strong1,16)
-	runtimes_strong1_64 = calc_speedups_strong(nrows_strong1,ncols_strong1,64)
-	runtimes_strong1_256 = calc_speedups_strong(nrows_strong1,ncols_strong1,256)
-	runtimes_strong1_1024 = calc_speedups_strong(nrows_strong1,ncols_strong1,1024)
-end;
-
-# ╔═╡ 4257a1f5-2697-4849-9f90-d0f94c3145ff
-begin
-	nrows_weak1 = 32
-	ncols_weak1 = 32
-end;
-
-# ╔═╡ b558ad50-08b5-4ae8-a952-98fb1a618c1c
-begin
-	nrows_strong2 = 64
-	ncols_strong2 = 64
-end;
-
-# ╔═╡ d0331007-a78f-436f-a517-f7268a1bf6f8
-begin
-	runtimes_strong2_16 = calc_speedups_strong(nrows_strong2,ncols_strong2,16)
-	runtimes_strong2_64 = calc_speedups_strong(nrows_strong2,ncols_strong2,64)
-	runtimes_strong2_256 = calc_speedups_strong(nrows_strong2,ncols_strong2,256)
-	#runtimes_strong2_1024 = calc_speedups(nrows_strong2,ncols_strong2,1024)
-end;
-
-# ╔═╡ bdc51a99-0298-4bc7-8780-6f9542138524
-begin
-	runtimes_weak1_16 = calc_speedups_weak(nrows_weak1,ncols_weak1,16)
-	runtimes_weak1_64 = calc_speedups_weak(nrows_weak1,ncols_weak1,64)
-	runtimes_weak1_256 = calc_speedups_weak(nrows_weak1,ncols_weak1,256)
-	runtimes_weak1_1024 = calc_speedups_weak(nrows_weak1,ncols_weak1,1024)
-end;
-
-# ╔═╡ a8d292f1-e54c-45e9-b09e-be8100c40a58
-md"## Strong scaling of dense matrix solve" 
-
-# ╔═╡ dc124d75-c372-4703-84e9-e4bd464994d6
-let 
-	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
-	scatter!(1:Threads.nthreads(), runtimes_strong2_16, label="($nrows_strong2 x $ncols_strong2)x16",color=1)
-	plot!(1:Threads.nthreads(), runtimes_strong2_16,label=:none,color=1)
-	scatter!(1:Threads.nthreads(), runtimes_strong2_64, label="($nrows_strong2 x $ncols_strong2)x64",color=2)
-	plot!(1:Threads.nthreads(), runtimes_strong2_64,label=:none,color=2)
-	scatter!(1:Threads.nthreads(), runtimes_strong2_256, label="($nrows_strong2 x $ncols_strong2)x256", color=3)
-	plot!(1:Threads.nthreads(), runtimes_strong2_256, label=:none,color=3)
-	#scatter!(1:Threads.nthreads(), first(runtimes_strong2_1024)./runtimes_strong2_1024, label="($nrows_strong2 x $ncols_strong2)x1024",color=4)
-	#plot!(1:Threads.nthreads(), first(runtimes_strong2_1024)./runtimes_strong2_1024,label=:none, color=4)
-	
-	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
-end
-
-# ╔═╡ bdb82d77-579b-439c-8418-a6ba301b3fc9
-let 
-	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
-	scatter!(1:Threads.nthreads(), runtimes_strong1_16, label="($nrows_strong1 x $ncols_strong1)x16",color=1)
-	plot!(1:Threads.nthreads(), runtimes_strong1_16,label=:none,color=1)
-	scatter!(1:Threads.nthreads(), runtimes_strong1_64, label="($nrows_strong1 x $ncols_strong1)x64",color=2)
-	plot!(1:Threads.nthreads(), runtimes_strong1_64,label=:none,color=2)
-	scatter!(1:Threads.nthreads(), runtimes_strong1_256, label="($nrows_strong1 x $ncols_strong1)x256", color=3)
-	plot!(1:Threads.nthreads(), runtimes_strong1_256, label=:none,color=3)
-	scatter!(1:Threads.nthreads(), runtimes_strong1_1024, label="($nrows_strong1 x $ncols_strong1)x1024",color=4)
-	plot!(1:Threads.nthreads(), runtimes_strong1_1024,label=:none, color=4)
-	
-	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
-end
-
-# ╔═╡ 7cd7ea26-ded7-4f73-b56a-4b24bdfc4449
-md"## Weak scaling of dense matrix solve" 
-
-# ╔═╡ 6130a5f8-77b0-4a5e-8e87-4db1887328c8
-let 
-	plt = plot(title="Speedup factor vs # Threads", xlabel="Number of Threads", ylabel="Speed-up Factor", legend=:topleft)
-	scatter!(1:Threads.nthreads(), runtimes_weak1_16, label="($nrows_weak1 x $ncols_weak1)x2N",color=1)
-	plot!(1:Threads.nthreads(), runtimes_weak1_16,label=:none,color=1)
-	scatter!(1:Threads.nthreads(), runtimes_weak1_64, label="($nrows_weak1 x $ncols_weak1)x16N",color=2)
-	plot!(1:Threads.nthreads(), runtimes_weak1_64,label=:none,color=2)
-	scatter!(1:Threads.nthreads(), runtimes_weak1_256, label="($nrows_weak1 x $ncols_weak1)x64N", color=3)
-	plot!(1:Threads.nthreads(), runtimes_weak1_256, label=:none,color=3)
-	scatter!(1:Threads.nthreads(), runtimes_weak1_1024, label="($nrows_weak1 x $ncols_weak1)x256N",color=4)
-	plot!(1:Threads.nthreads(), runtimes_weak1_1024,label=:none, color=4)
-	
-	plot!(1:Threads.nthreads(),1:Threads.nthreads(), label="Ideal",color=:black)
-end
-
-# ╔═╡ f42f0871-55e0-4d81-be20-2ff26cefa93a
-md"""
-# Considerations for how to parallelize code
-- How many tasks do you have to parallelize?
-- How long does each task require?
-- What is most time consuming part of task?  (e.g., arithmetic, memory access, loading from disk)
-- How similar is time required for each task?
-- What architecture do you plan to use for your second parallelization?
-  + What's the maximum number of processors that you might want to parallelize over?
-  + How much communications is required between workers
-"""
-
-# ╔═╡ f3165718-746e-431d-9e2d-e1ce39722d4d
-md"""
-## Parallel Architectures
-- Shared Memory (Lab 6)
-- Distributed Memory (Lab 7)
-- Hardware Accelerator (Lab 8)
-"""
-
-# ╔═╡ 76792744-89ca-4387-99d2-bc11268ce863
-blockquote(md"""
-What is the benefit of using distributed memory over shared memory?
-""")
-
-# ╔═╡ 85131ae5-5cc4-4923-ae8e-d3d424a77370
-blockquote(md"""
-Is there ever a case where parallelization is not worth it?
-...
-Can [it] actually be worse than the serial version of a code?
-""")
-
-# ╔═╡ 5dbc0006-9cd8-4fbc-9828-98df1d335d5c
-md"""
-- Existing code is fast enough
-- Significant fraciton of work can not be parallelized (e.g., disk access, querying server)
-- Paralleling accurately would take too much human time
-
-Yes!
-- Parallelizing requires extensive communications between workers
-"""
-
-# ╔═╡ 9a0a095c-2de1-4020-862b-3135afff980b
-blockquote(md"""
-Do initiliazing cores and sending tasks in embarassingly parallel take a long time?
-""")
-
-# ╔═╡ aac0c46d-c0f9-49d4-9ab6-6855dca6514e
-md"""
-It depends.  Long compared to what?
-"""
-
-# ╔═╡ 749888bc-511c-40f3-babe-2ebaa7e327c1
-hint(md"""Time required to:
-- Send input data to each worker
-- Perform calculations on each worker
-- Send output data back to delegator
-
-""")
-
-# ╔═╡ f9bf31c3-6794-4eea-a3da-b6010ee77182
-blockquote(md"""
-Suppose using a GPU can provide x100 speedup compared to a CPU core, and using 100 CPU cores can also achieve the same speed up...
-
-Why not use 100 CPUs? Other than the cost of one GPU vs. 100 CPUs, what are other pros and cons of using a GPU vs. many CPUs?
-""")
-
 # ╔═╡ cab2144d-d8f1-41f2-9ccc-53c1ad0ae5c5
 md"# Some quick Q&As"
 
@@ -548,6 +589,11 @@ plt = scatter(x,y)
 savefig(plt,"myplot.png")
 ```
 
+"""
+
+# ╔═╡ 6b3bb22c-faab-42b4-b0c5-b35098ec2aa6
+md"""
+## Old questions
 """
 
 # ╔═╡ f93548b4-4295-4331-85f4-46ed983d9e41
@@ -649,6 +695,23 @@ Also
 
 # ╔═╡ c9013543-de41-4ca7-9e62-046b169b95d4
 md"# Helper Code"
+
+# ╔═╡ 275d2ab8-68b3-4139-b34e-a2fef2333ed9
+if false
+	local npages = 4
+	local A_list = randn(nrows_weak1,ncols_weak1,npages)
+	local x_list = randn(nrows_weak1,npages)
+	
+	max_nthreads_blas = 8
+	runtimes_blas = zeros(max_nthreads_blas)
+	for i in 1:max_nthreads_blas
+		ENV["OPENBLAS_NUM_THREADS"] = i
+		j = 1
+		runtimes_blas[i] += @belapsed benchmark_me($j,A=$A_list,x=$x_list)  samples=100 evals=5 
+ 	end
+	ENV["OPENBLAS_NUM_THREADS"] = 1
+	runtimes_blas
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1980,26 +2043,6 @@ version = "1.4.1+1"
 # ╟─aecdcdbc-5ef6-4a7b-bd65-d01ed1cfe497
 # ╟─f7fdc34c-2c99-493d-9977-f206bb7a2810
 # ╟─545d6631-9a06-4e59-a306-cddc6d405689
-# ╟─33fcbd8e-7ff0-48c8-8846-740daf5e437f
-# ╟─cd940357-23d5-4c26-8e4c-507dcfe06f3c
-# ╟─4973ed03-3861-4aad-92c6-b7b5458b9f12
-# ╟─66e58a6d-4fcc-498b-b2e5-91ad365d7730
-# ╟─fd7d7f56-9782-45d1-90f2-d0cd4e600938
-# ╟─8fd485b5-cf63-4d14-8fcc-da85ed85fa0a
-# ╟─123c09a1-831d-4f51-9edd-c911dd92e2b2
-# ╟─643b1169-41cd-4a6c-8e84-177caafed6d1
-# ╠═79accce8-6f2e-4daa-b0d1-690ff6fcfc67
-# ╠═a3f7ded0-46db-4bc8-87a3-b267ae1b719a
-# ╠═999a5144-eaad-46e4-be93-cfc0317cffbb
-# ╠═9a6b7a51-d92b-4551-b1c9-18d280188eb7
-# ╠═715f05cb-9d44-47d8-b641-503acc2332cd
-# ╠═b06a67b6-c6ae-4218-8b8a-1383e52ac932
-# ╠═ec2ca6bf-b316-46e4-bacb-5efa6d5f9a6d
-# ╟─e9ea91d4-6458-4e29-a0b4-87335ed02752
-# ╟─81baf9de-e0ec-4183-b45c-acb4563e1b60
-# ╟─7ff0aad1-93a7-4200-a05a-15fbdb52e8b6
-# ╟─83cef5f0-b56e-4fd9-85db-81206bcd9b1c
-# ╟─af5aa27d-137d-4476-b872-409c7a8eb95f
 # ╟─c81b1a95-e8cd-4936-b398-334688100f18
 # ╟─4dbce3d8-5cf5-48f0-af62-787701a2cc82
 # ╟─873791ba-de27-4097-8903-9a450c7bd44c
@@ -2024,23 +2067,51 @@ version = "1.4.1+1"
 # ╟─bdb82d77-579b-439c-8418-a6ba301b3fc9
 # ╟─7cd7ea26-ded7-4f73-b56a-4b24bdfc4449
 # ╟─6130a5f8-77b0-4a5e-8e87-4db1887328c8
-# ╟─4257a1f5-2697-4849-9f90-d0f94c3145ff
+# ╠═4257a1f5-2697-4849-9f90-d0f94c3145ff
 # ╟─880c72dd-4a37-44e7-b7eb-e73faf9b40a3
 # ╟─bdc51a99-0298-4bc7-8780-6f9542138524
 # ╟─f42f0871-55e0-4d81-be20-2ff26cefa93a
 # ╟─f3165718-746e-431d-9e2d-e1ce39722d4d
 # ╟─76792744-89ca-4387-99d2-bc11268ce863
+# ╟─0cf062cb-8955-4ca4-a925-d786b640c4a3
 # ╟─85131ae5-5cc4-4923-ae8e-d3d424a77370
 # ╟─5dbc0006-9cd8-4fbc-9828-98df1d335d5c
 # ╟─9a0a095c-2de1-4020-862b-3135afff980b
 # ╟─aac0c46d-c0f9-49d4-9ab6-6855dca6514e
 # ╟─749888bc-511c-40f3-babe-2ebaa7e327c1
+# ╟─e104b575-9844-4be4-976a-d7854ae58352
+# ╟─e2305ed1-2ea1-4abb-ba84-fcae1b92b3be
+# ╟─e6e5b855-7e4f-4060-ad81-b55c42232740
+# ╟─7b8d34c3-02ef-496c-b409-3472c7a7c00f
+# ╟─01ef4fbb-ef4a-4627-bf3a-1a544a176dc0
+# ╟─af03c759-27e1-4a60-82ef-c8063ddcaafb
 # ╟─f9bf31c3-6794-4eea-a3da-b6010ee77182
+# ╟─33fcbd8e-7ff0-48c8-8846-740daf5e437f
+# ╟─cd940357-23d5-4c26-8e4c-507dcfe06f3c
+# ╟─4973ed03-3861-4aad-92c6-b7b5458b9f12
+# ╟─66e58a6d-4fcc-498b-b2e5-91ad365d7730
+# ╟─fd7d7f56-9782-45d1-90f2-d0cd4e600938
+# ╟─8fd485b5-cf63-4d14-8fcc-da85ed85fa0a
+# ╟─123c09a1-831d-4f51-9edd-c911dd92e2b2
+# ╟─643b1169-41cd-4a6c-8e84-177caafed6d1
+# ╠═79accce8-6f2e-4daa-b0d1-690ff6fcfc67
+# ╠═a3f7ded0-46db-4bc8-87a3-b267ae1b719a
+# ╠═999a5144-eaad-46e4-be93-cfc0317cffbb
+# ╠═9a6b7a51-d92b-4551-b1c9-18d280188eb7
+# ╠═715f05cb-9d44-47d8-b641-503acc2332cd
+# ╠═b06a67b6-c6ae-4218-8b8a-1383e52ac932
+# ╠═ec2ca6bf-b316-46e4-bacb-5efa6d5f9a6d
+# ╟─e9ea91d4-6458-4e29-a0b4-87335ed02752
+# ╟─81baf9de-e0ec-4183-b45c-acb4563e1b60
+# ╟─7ff0aad1-93a7-4200-a05a-15fbdb52e8b6
+# ╟─83cef5f0-b56e-4fd9-85db-81206bcd9b1c
+# ╟─af5aa27d-137d-4476-b872-409c7a8eb95f
 # ╟─cab2144d-d8f1-41f2-9ccc-53c1ad0ae5c5
 # ╟─9eecfc6b-558c-48cc-9d3b-0fbf99446177
 # ╠═7a719a71-7e36-4e89-a3c7-f52788c501c1
 # ╠═2a2a4948-67cf-4ed5-88dd-1f087ae9a016
 # ╟─0999a4e1-b09e-488b-8010-fcda65a5738a
+# ╟─6b3bb22c-faab-42b4-b0c5-b35098ec2aa6
 # ╟─f93548b4-4295-4331-85f4-46ed983d9e41
 # ╟─173ba681-6998-46d3-b528-b75624629457
 # ╟─60c7e8cc-28a3-41f9-aa11-7e17be3e9324
@@ -2052,5 +2123,6 @@ version = "1.4.1+1"
 # ╟─c9013543-de41-4ca7-9e62-046b169b95d4
 # ╠═c76b6672-53df-4fd1-a39a-609248914446
 # ╠═2aa60451-2e25-4b9d-ba0c-13b416f0d7af
+# ╟─275d2ab8-68b3-4139-b34e-a2fef2333ed9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
