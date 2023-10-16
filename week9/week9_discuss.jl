@@ -245,11 +245,10 @@ julia --project -t $SLURM_TASKS_PER_NODE ex1_parallel.jl
 ```
 - Distributed memory on one node
 ```bash
-#SBATCH --nodes=4 
-#SBATCH --ntasks-per-node=1
+#SBATCH --nodes=1 
+#SBATCH --ntasks-per-node=4
 #SBATCH --ntasks=4 
 ...
-julia --project --machine-file $PBS_NODEFILE ex1_parallel.jl
 julia --project=. -p $SLURM_TASKS_PER_NODE ex1_parallel.jl
 ```
 - Distributed memory over multiple nodes
