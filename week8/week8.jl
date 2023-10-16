@@ -365,6 +365,11 @@ blockquote(md"""
 - Calculation that involves taking measurement of a sample (ex: mean(x), sum(x), maximum(x))
 """)
 
+# ╔═╡ 63a284a1-9928-4d66-8357-ff36b23812c0
+md"""
+#### Resume here on Wednesday
+"""
+
 # ╔═╡ 7b8d34c3-02ef-496c-b409-3472c7a7c00f
 md"""
 ### What programming model to use?
@@ -478,6 +483,11 @@ end
 with_terminal() do 
 	expensive_function(1)
 end
+
+# ╔═╡ 5789460e-614e-4563-bfff-08e2d3eb4885
+md"""
+To memoize based on the values of a collection:
+"""
 
 # ╔═╡ 715f05cb-9d44-47d8-b641-503acc2332cd
 @memoize Dict function expensive_function_vec(a::AbstractVector)
@@ -2082,6 +2092,7 @@ version = "1.4.1+1"
 # ╟─e104b575-9844-4be4-976a-d7854ae58352
 # ╟─e2305ed1-2ea1-4abb-ba84-fcae1b92b3be
 # ╟─e6e5b855-7e4f-4060-ad81-b55c42232740
+# ╟─63a284a1-9928-4d66-8357-ff36b23812c0
 # ╟─7b8d34c3-02ef-496c-b409-3472c7a7c00f
 # ╟─01ef4fbb-ef4a-4627-bf3a-1a544a176dc0
 # ╟─af03c759-27e1-4a60-82ef-c8063ddcaafb
@@ -2098,6 +2109,7 @@ version = "1.4.1+1"
 # ╠═a3f7ded0-46db-4bc8-87a3-b267ae1b719a
 # ╠═999a5144-eaad-46e4-be93-cfc0317cffbb
 # ╠═9a6b7a51-d92b-4551-b1c9-18d280188eb7
+# ╟─5789460e-614e-4563-bfff-08e2d3eb4885
 # ╠═715f05cb-9d44-47d8-b641-503acc2332cd
 # ╠═b06a67b6-c6ae-4218-8b8a-1383e52ac932
 # ╠═ec2ca6bf-b316-46e4-bacb-5efa6d5f9a6d
