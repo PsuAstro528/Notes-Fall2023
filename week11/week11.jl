@@ -75,6 +75,9 @@ According to textbook:
    + Code development
 """)
 
+# ╔═╡ 94d6612c-364c-4892-ac4b-b0ca21f49589
+blockquote(md"""What is a good example of "use a build tool to automate workflows"?""")
+
 # ╔═╡ cd04a158-150e-4679-8602-68ab9666f21e
 md"""
 ## Build System
@@ -245,6 +248,11 @@ rule post_process:
 ```
 """
 
+# ╔═╡ d5fa33ed-fa54-44a6-aeb5-2e3c825149dd
+blockquote(md"""
+Is there a reason why we would ever want to not use a command line interphase to work on projects?
+""")
+
 # ╔═╡ 3bb2feb8-6e54-44f4-bb81-7afea27f64d5
 md"""
 # Parallel Random Number Generators
@@ -317,7 +325,17 @@ with_terminal() do
 end
 
 # ╔═╡ f98a63cc-253c-48ad-bfb5-52c70983049a
+blockquote(md"""
+What is something you personally believed needs to be created/invested in by the astro community to better facilitate positive scientific software practices? Do you view it more as a funding or astro-cultural issue?
+""")
 
+# ╔═╡ 8b297ffb-bc91-4603-b144-5838a7c0b314
+md"""
+#### Deprioritizing being "first", so that people can focus on:
+- Testing one's own work more thoroughly (both science and code) before publishing
+- Designing software thoughtfully (rather than sprinting)
+- Maintaining/improving existing software for benefit of others.
+"""
 
 # ╔═╡ 54d44ca6-9b20-476e-9d79-b808e42ab5d9
 md"""# GPUs with Autodifferentiation
@@ -481,20 +499,6 @@ Workflow management tools designed to automate running of codes, finding inputs,
 - [Galaxy](https://galaxyproject.org/)
 """
 
-# ╔═╡ a93bb394-4566-4dc2-a3b0-e535013c5453
-md"""
-**Q:** Can you re-explain what the [Julia registry](https://github.com/JuliaRegistries/General) is?
-
-Why do we include code to **prevent it from being updaed by** new threads/cores in Labs 6 and 7?
-
-```julia
-@everywhere import Pkg
-@everywhere Pkg.offline(true)
-```
-
-**A:** Package manager queries the general registry to see if updates are avaliable.  Often some package we don't care about has been updated, triggering it to download and process the updated registry.  We don't want multiple processors doing that simultaneously.
-"""
-
 # ╔═╡ d2ead952-d962-457a-8eba-ea4f47c58bfa
 md"""
 ## Planning your time
@@ -536,6 +540,20 @@ md"""
 """
 
 
+
+# ╔═╡ a93bb394-4566-4dc2-a3b0-e535013c5453
+md"""
+**Q:** Can you re-explain what the [Julia registry](https://github.com/JuliaRegistries/General) is?
+
+Why do we include code to **prevent it from being updaed by** new threads/cores in Labs 6 and 7?
+
+```julia
+@everywhere import Pkg
+@everywhere Pkg.offline(true)
+```
+
+**A:** Package manager queries the general registry to see if updates are avaliable.  Often some package we don't care about has been updated, triggering it to download and process the updated registry.  We don't want multiple processors doing that simultaneously.
+"""
 
 # ╔═╡ e040dee5-387d-4755-81fa-a4c46a2323b2
 md"""
@@ -1424,6 +1442,7 @@ version = "17.4.0+0"
 # ╟─1ce7ef5b-c213-47ba-ac96-9622b62cda61
 # ╟─316b2027-b3a6-45d6-9b65-e26b4ab42e5e
 # ╟─d8ce73d3-d4eb-4d2e-b5e6-88afe0920a47
+# ╟─94d6612c-364c-4892-ac4b-b0ca21f49589
 # ╟─cd04a158-150e-4679-8602-68ab9666f21e
 # ╟─741de66c-968e-4dc6-ad7a-67ac5f995775
 # ╟─2a020c98-01a2-4ca0-8db9-8636394ab05c
@@ -1433,6 +1452,7 @@ version = "17.4.0+0"
 # ╟─af0b34cb-1a6a-437c-9888-c358c1bed4f0
 # ╟─d3d08b5a-d8ce-4832-a7bd-0ec3f9db517f
 # ╟─b9740055-70da-4330-a533-6ff779463808
+# ╟─d5fa33ed-fa54-44a6-aeb5-2e3c825149dd
 # ╟─3bb2feb8-6e54-44f4-bb81-7afea27f64d5
 # ╟─914e41bb-7cfc-44f7-9764-a3351c586bc7
 # ╠═a02e1141-6567-4675-bd65-34d0b5133f08
@@ -1443,7 +1463,8 @@ version = "17.4.0+0"
 # ╠═ecebd8cf-06ac-43c0-8c14-a9cd891d05b6
 # ╠═3c4e85fd-2741-4a81-be38-0d8d7a28c129
 # ╠═98ff3fc5-8a4a-4185-a656-82769d90b1fe
-# ╠═f98a63cc-253c-48ad-bfb5-52c70983049a
+# ╟─f98a63cc-253c-48ad-bfb5-52c70983049a
+# ╟─8b297ffb-bc91-4603-b144-5838a7c0b314
 # ╟─54d44ca6-9b20-476e-9d79-b808e42ab5d9
 # ╠═715d4760-6020-41c5-b16a-740a160655c7
 # ╠═a504a5d6-df69-4ef7-b19e-09b165944f89
