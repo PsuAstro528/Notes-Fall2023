@@ -27,7 +27,7 @@ begin
 end
 
 # ╔═╡ 0b431bf7-1f57-40c4-ad0c-012cbdbf9528
-md"> Astro 528: High-Performance Scientific Computing for Astrophysics (Fall 2021)"
+md"> Astro 528: High-Performance Scientific Computing for Astrophysics (Fall 2023)"
 
 # ╔═╡ a21b553b-eecb-4105-a0ed-d936e500788b
 ChooseDisplayMode()
@@ -88,10 +88,10 @@ md"""### Example Makefiles
 #### Simple Makefile
 ```make
 all: myprog.c 
-	gcc -g -Wall -o myprog myprog.c
+	gcc -g -Wall -o myprog.exe myprog.c
 
 clean: 
-	rm -f myprog
+	rm -f myprog.exe
 ```
 
 #### Makefile w/ variable & rule
@@ -100,6 +100,9 @@ CPPFLAGS := -Wall -O3 -fopenmp
 
 %.o : %.c
         $(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+myprog.exe: myprog.o 
+	$(CC)  $(CFLAGS) $(CPPFLAGS) -o $@ myprog.o
 ```
 
 Run makefile from command line with 
@@ -342,6 +345,12 @@ md"""
 - Maintaining/improving existing software for benefit of others.
 """
 
+# ╔═╡ 61f0df74-4611-43f1-8900-3e5fc06e949f
+blockquote(md"""
+- What is the difference between an interface and implementation?
+- What does "Document interfaces and reasons, not implementations" mean?
+""")
+
 # ╔═╡ 54d44ca6-9b20-476e-9d79-b808e42ab5d9
 md"""# GPUs with Autodifferentiation
 (Example based on JuliaCon 2021's [GPU Workshop's enzyme notebook](https://github.com/maleadt/juliacon21-gpu_workshop/blob/main/enzyme/enzyme.ipynb))
@@ -452,6 +461,11 @@ I know some GPUs support half precision, is it twice as fast as single precision
 # ╔═╡ b7095c00-c625-4d29-a8b4-ac54fbbe00c2
 blockquote(md"""
 What are some of the good examples of unique identifiers and version numbers? I sometimes refer to date as identifiers, but if one day I have multiple versions or I wait too long to go back on the project, I might forget which version is the one I am interested in.
+""")
+
+# ╔═╡ 3538b3d1-b5ee-4bf7-85b1-99634e0cd555
+blockquote(md"""
+Why would parallelization lead to an increase of 10-40x the memory allocation? Is there a way to minimize this allocation?
 """)
 
 # ╔═╡ 24cb813e-af85-435f-9c43-db38e8eaa1d2
@@ -603,19 +617,6 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Random123 = "74087812-796a-5b5d-8853-05524746bad3"
-
-[compat]
-Adapt = "~3.7.1"
-CUDA = "~4.0.1"
-Enzyme = "~0.10.18"
-FLoops = "~0.2.1"
-Folds = "~0.2.8"
-KernelAbstractions = "~0.8.6"
-KernelGradients = "~0.1.2"
-PlutoTeachingTools = "~0.2.13"
-PlutoTest = "~0.2.2"
-PlutoUI = "~0.7.52"
-Random123 = "~1.6.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -624,7 +625,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "a7465d06f7ed99fb6fdc93d0a2e8d59ff61ccc11"
+project_hash = "b3026747a384814222fa78ddea76540557c838bf"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -667,9 +668,9 @@ version = "0.1.33"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "02f731463748db57cc2ebfbd9fbc9ce8280d3433"
+git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.7.1"
+version = "3.6.2"
 weakdeps = ["StaticArrays"]
 
     [deps.Adapt.extensions]
@@ -1270,9 +1271,9 @@ version = "1.3.0"
 
 [[deps.Revise]]
 deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "Requires", "UUIDs", "Unicode"]
-git-tree-sha1 = "ba168f8fc36bf83c8d0573d464b7aab0f8a81623"
+git-tree-sha1 = "609c26951d80551620241c3d7090c71a73da75ab"
 uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
-version = "3.5.7"
+version = "3.5.6"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -1356,9 +1357,9 @@ version = "1.0.1"
 
 [[deps.Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "cb76cf677714c095e535e3501ac7954732aeea2d"
+git-tree-sha1 = "a1f34829d5ac0ef499f6d84428bd6b4c71f02ead"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.11.1"
+version = "1.11.0"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -1483,6 +1484,7 @@ version = "17.4.0+0"
 # ╠═98ff3fc5-8a4a-4185-a656-82769d90b1fe
 # ╟─f98a63cc-253c-48ad-bfb5-52c70983049a
 # ╟─8b297ffb-bc91-4603-b144-5838a7c0b314
+# ╟─61f0df74-4611-43f1-8900-3e5fc06e949f
 # ╟─54d44ca6-9b20-476e-9d79-b808e42ab5d9
 # ╠═715d4760-6020-41c5-b16a-740a160655c7
 # ╠═a504a5d6-df69-4ef7-b19e-09b165944f89
@@ -1498,6 +1500,7 @@ version = "17.4.0+0"
 # ╟─0b5dd506-d79a-4094-8c9e-e885f0273ab1
 # ╟─203c9cde-93b8-4328-8400-76ff8f26987a
 # ╟─b7095c00-c625-4d29-a8b4-ac54fbbe00c2
+# ╟─3538b3d1-b5ee-4bf7-85b1-99634e0cd555
 # ╟─24cb813e-af85-435f-9c43-db38e8eaa1d2
 # ╟─f69f32fc-f759-4567-9c1c-37676eaf713d
 # ╟─b8fb2e42-7d3a-4654-8bbd-6b342239882e
