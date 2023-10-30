@@ -110,6 +110,11 @@ make
 For a nice tutorial, see [makefiletutorial.com](https://makefiletutorial.com/#pattern-rules).
 """
 
+# ╔═╡ 6f5713ef-c9bd-41ac-b497-273891daf528
+blockquote(md"""
+What are other examples of workflow management tools besides Make?
+""")
+
 # ╔═╡ 2a020c98-01a2-4ca0-8db9-8636394ab05c
 md"""
 ## Snakemake
@@ -435,7 +440,19 @@ md"""
 """
 
 # ╔═╡ 0b5dd506-d79a-4094-8c9e-e885f0273ab1
+blockquote(md"""
+Do compiled languages such as Fortran or C\# offer many ways to speed up code or do we rely on build languages such as Julia for maximum efficiency?
+""")
 
+# ╔═╡ 203c9cde-93b8-4328-8400-76ff8f26987a
+blockquote(md"""
+I know some GPUs support half precision, is it twice as fast as single precision?
+""")
+
+# ╔═╡ b7095c00-c625-4d29-a8b4-ac54fbbe00c2
+blockquote(md"""
+What are some of the good examples of unique identifiers and version numbers? I sometimes refer to date as identifiers, but if one day I have multiple versions or I wait too long to go back on the project, I might forget which version is the one I am interested in.
+""")
 
 # ╔═╡ 24cb813e-af85-435f-9c43-db38e8eaa1d2
 md"""# Project Rubrics
@@ -1445,6 +1462,7 @@ version = "17.4.0+0"
 # ╟─94d6612c-364c-4892-ac4b-b0ca21f49589
 # ╟─cd04a158-150e-4679-8602-68ab9666f21e
 # ╟─741de66c-968e-4dc6-ad7a-67ac5f995775
+# ╟─6f5713ef-c9bd-41ac-b497-273891daf528
 # ╟─2a020c98-01a2-4ca0-8db9-8636394ab05c
 # ╟─4d1468bb-90db-45cb-b21e-7045ccb50d06
 # ╟─eee2e610-a771-4c97-acc3-4bc209368a56
@@ -1477,7 +1495,9 @@ version = "17.4.0+0"
 # ╠═62ace3b8-0e38-4150-80e6-2488d19f8d5d
 # ╠═25dd3208-1b76-4122-9de4-7c177f136b6d
 # ╟─b6b281af-64a1-44b4-a9b6-ee0ba17f5c0b
-# ╠═0b5dd506-d79a-4094-8c9e-e885f0273ab1
+# ╟─0b5dd506-d79a-4094-8c9e-e885f0273ab1
+# ╟─203c9cde-93b8-4328-8400-76ff8f26987a
+# ╟─b7095c00-c625-4d29-a8b4-ac54fbbe00c2
 # ╟─24cb813e-af85-435f-9c43-db38e8eaa1d2
 # ╟─f69f32fc-f759-4567-9c1c-37676eaf713d
 # ╟─b8fb2e42-7d3a-4654-8bbd-6b342239882e
