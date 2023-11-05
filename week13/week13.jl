@@ -20,7 +20,7 @@ begin
 end
 
 # ╔═╡ 0b431bf7-1f57-40c4-ad0c-012cbdbf9528
-md"> Astro 528: High-Performance Scientific Computing for Astrophysics (Fall 2021)"
+md"> Astro 528: High-Performance Scientific Computing for Astrophysics (Fall 2023)"
 
 # ╔═╡ a21b553b-eecb-4105-a0ed-d936e500788b
 ChooseDisplayMode()
