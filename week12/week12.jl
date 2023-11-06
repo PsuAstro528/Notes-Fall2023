@@ -367,6 +367,14 @@ If a piece of novel software is important to published research then it is likel
 ...
 """
 
+# ╔═╡ 0fe2e633-ef33-4db7-a3e5-5d64c28f0ec3
+md"""
+## Why make a package?
+- Ease process of installation.
+- Support people using your code as a reproducible environment.
+- Packages can be precompiled, so as to reduce startup costs.
+"""
+
 # ╔═╡ 0ad3b202-f19c-433e-bb63-81b5e0475561
 md"""
 # Creating your own package
@@ -514,6 +522,21 @@ What happens if you use software packages with two different, conflicting "repro
 # ╔═╡ 0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
 md"""
 Each package should specify it's requirements.  Package manager works to find set of versions that satisfy all requirements.  If impossible, then you''ll get an error message.
+"""
+
+# ╔═╡ 192ffc58-34cf-4d90-b68d-998b9d299c2b
+blockquote(md"""
+How do you setup a package so that they can run one command and install all of the required packages?
+""")
+
+# ╔═╡ 9516f9b4-1d17-490c-ac51-1c04859ec553
+md"""
+**A:** Provide a `Project.toml` (and optionally `Manifest.toml`).  Then they only need to run 
+```julia
+import Pkg
+Pkg.add("YourPackage")
+Pkg.instantiate()
+```
 """
 
 # ╔═╡ 2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
@@ -1117,6 +1140,7 @@ version = "17.4.0+0"
 # ╟─dda25ec4-fb92-45ad-972b-f1280a9bcee6
 # ╟─69b1eb2f-77f5-4be8-a7d6-d0a96492426d
 # ╟─1448a5f5-3338-400f-afab-cea76667367a
+# ╟─0fe2e633-ef33-4db7-a3e5-5d64c28f0ec3
 # ╟─0ad3b202-f19c-433e-bb63-81b5e0475561
 # ╟─92372aba-8622-44c4-ad78-067ca74db521
 # ╟─579aa237-96c3-4fab-b243-4039fdb33fb5
@@ -1130,6 +1154,8 @@ version = "17.4.0+0"
 # ╠═1daeee93-c9b7-4490-9a44-cbbf1f8f225a
 # ╟─cdebd8ca-fa39-4869-8a37-e172fbdbe762
 # ╟─0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
+# ╟─192ffc58-34cf-4d90-b68d-998b9d299c2b
+# ╟─9516f9b4-1d17-490c-ac51-1c04859ec553
 # ╟─2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
 # ╟─8f0b9223-c042-4a0d-90cc-cbd1a854358a
 # ╟─3d069f53-6e8f-45fd-98db-0b75a1b56bb6
