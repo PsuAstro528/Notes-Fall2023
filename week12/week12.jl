@@ -361,6 +361,28 @@ Release notes:
 ```
 """)
 
+# ╔═╡ b8184ef1-e4c2-4bf2-a918-c9d3713efe70
+blockquote(md"""
+In the readings, they describe package versions as something like x.y.z, what is the difference between x, y, and z, and how do I decide which number my current update should increment?
+""")
+
+# ╔═╡ 0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
+md"""
+- X: Major: Can break things, e.g., improve API. 
+- Y: Minor: Minor changes, new features, bugfixes, refactoring internals, improvements that are unlikly to break things.
+- Z: Patch: Bugfixes, documentation improvements, low-risk performance upgrades
+"""
+
+# ╔═╡ cdebd8ca-fa39-4869-8a37-e172fbdbe762
+blockquote(md"""
+What happens if you use software packages with two different, conflicting "reproducible states", and/or have conflicting dependencies?
+""")
+
+# ╔═╡ 0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
+md"""
+Each package should specify it's requirements.  Package manager works to find set of versions that satisfy all requirements.  If impossible, then you''ll get an error message.
+"""
+
 # ╔═╡ 316b2027-b3a6-45d6-9b65-e26b4ab42e5e
 md"""
 # Overview Reproduciblity & Julia 
@@ -949,6 +971,10 @@ version = "17.4.0+0"
 # ╟─0ad3b202-f19c-433e-bb63-81b5e0475561
 # ╟─1b50b18f-1ce6-4ea7-81b3-4b1024736509
 # ╟─de682378-9bf5-46d9-bf35-16480dc61327
+# ╟─b8184ef1-e4c2-4bf2-a918-c9d3713efe70
+# ╟─0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
+# ╟─cdebd8ca-fa39-4869-8a37-e172fbdbe762
+# ╟─0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
 # ╟─316b2027-b3a6-45d6-9b65-e26b4ab42e5e
 # ╟─b717a30b-0aa9-44ff-bcd0-f6c67441d5ce
 # ╟─33470afe-08d0-4639-b1ff-92591a416cb0
