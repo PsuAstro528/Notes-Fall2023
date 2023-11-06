@@ -374,8 +374,9 @@ If you are starting a different project but have similar to an existing package'
 
 # ╔═╡ 52d33a27-6bb4-4325-b047-7625103f2b78
 md"""
-Possible:  Yes
-Recommended: No.  Packages need unique identifiers.  
+Possible? 
+
+Yes.  But packages need unique identifiers to avoid confusion.  
 """
 
 # ╔═╡ 1daeee93-c9b7-4490-9a44-cbbf1f8f225a
