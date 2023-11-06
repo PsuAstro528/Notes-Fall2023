@@ -139,7 +139,10 @@ starts julia with default environment (separate environment for each minor versi
 """
 
 # ╔═╡ 4368a43d-b468-4117-875a-4f1641ed4c48
-blockquote(md"What is the difference between Project.toml and Manifest.toml?")
+blockquote(md"""
+What do the Project.toml and Manifest.toml files do?
+	
+What is the difference between Project.toml and Manifest.toml?""")
 
 # ╔═╡ b860247e-204c-4f8a-9d74-c1350f83313c
 md"""
@@ -368,6 +371,7 @@ In the readings, they describe package versions as something like x.y.z, what is
 
 # ╔═╡ 0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
 md"""
+#### [Semantic Versioning 2.0](https://semver.org/):
 - X: Major: Can break things, e.g., improve API. 
 - Y: Minor: Minor changes, new features, bugfixes, refactoring internals, improvements that are unlikly to break things.
 - Z: Patch: Bugfixes, documentation improvements, low-risk performance upgrades
