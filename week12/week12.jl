@@ -231,6 +231,91 @@ version = "0.8.5"
 ```
 """
 
+# ╔═╡ a284e45d-fa6d-4968-a996-1bc424ab5bfd
+md"""
+Providing both `Project.toml` and `Manifest.toml` for an environment maximizes reproducibility (e.g., for code to reproduce figures in a paper).  
+
+But packages that are meant to be imported by others typically provide only a `Project.toml`, so the package manager can figure out how best to combine packages. Julia's default registry requires packages to provide `[compat]` constraints for each dependency. 
+"""
+
+# ╔═╡ cf46018f-506e-4c12-b5ba-d3067e4dde7c
+md"""
+`Project.toml` for a simple registered package.
+```toml
+name = "PlutoTeachingTools"
+uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
+authors = ["Eric Ford <ebf11@psu.edu> and contributors"]
+version = "0.2.13"
+
+[deps]
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+PlutoLinks = "0ff47ea0-7a50-410d-8455-4348d5de0420"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[compat]
+HypertextLiteral = "0.9"
+LaTeXStrings = "1"
+Latexify = "0.15, 0.16"
+PlutoLinks = "0.1.5"
+PlutoUI = "0.7"
+julia = "1.7, 1.8, 1.9"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+```
+"""
+
+# ╔═╡ b8184ef1-e4c2-4bf2-a918-c9d3713efe70
+blockquote(md"""
+In the readings, they describe package versions as something like x.y.z, what is the difference between x, y, and z, and how do I decide which number my current update should increment?
+""")
+
+# ╔═╡ 0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
+md"""
+#### [Semantic Versioning 2.0](https://semver.org/):
+- X: Major: Can break things, e.g., improve API. 
+- Y: Minor: Minor changes, new features, bugfixes, refactoring internals, improvements that are unlikly to break things.
+- Z: Patch: Bugfixes, documentation improvements, low-risk performance upgrades
+"""
+
+# ╔═╡ af9a18b8-77f3-4ff1-a7bc-c86e2006a937
+md"""
+`[compat]` allows developer to specify what versions/upgrades will be allowed.  
+```toml
+# A leading caret (^) allows upgrades that would be compatible according to semver
+PkgA = "^1.2.3" # [1.2.3, 2.0.0)
+PkgB = "^1.2"   # [1.2.0, 2.0.0)
+PkgC = "^1"     # [1.0.0, 2.0.0)
+PkgD = "^0.2.3" # [0.2.3, 0.3.0)
+# ^ is the default
+Example = "0.2.1" # [0.2.1, 0.3.0)
+# ~ is more restrictive
+PkgA = "~1.2.3" # [1.2.3, 1.3.0)
+PkgB = "~1.2"   # [1.2.0, 1.3.0)
+PkgC = "~1"     # [1.0.0, 2.0.0)
+# = requires exact equality
+PkgA = "=1.2.3"           # [1.2.3, 1.2.3]
+PkgA = "=0.10.1, =0.10.3" # 0.10.1 or 0.10.3
+# - allows for ranges
+PkgA = "1.2.3 - 4.5.6" # [1.2.3, 4.5.6]
+PkgA = "0.2.3 - 4.5.6" # [0.2.3, 4.5.6]
+PkgA = "1.2.3 - 4.5"   # 1.2.3 - 4.5.* = [1.2.3, 4.6.0)
+PkgA = "1.2.3 - 4"     # 1.2.3 - 4.*.* = [1.2.3, 5.0.0)
+PkgA = "1.2 - 4.5"     # 1.2.0 - 4.5.* = [1.2.0, 4.6.0)
+PkgA = "1.2 - 4"       # 1.2.0 - 4.*.* = [1.2.0, 5.0.0)
+
+```
+For details and more examples, see [documentation](https://pkgdocs.julialang.org/v1/compatibility/).
+"""
+
 # ╔═╡ 8f98ed9a-6453-4f59-a20d-753af5c847df
 md"""
 ## Pluto & Package Management/Environments
@@ -245,8 +330,9 @@ import Pkg, Pluto
 Pluto.activate_notebook_environment("~/Documents/hello.jl")
 Pkg.update()
 ```
-- Can revert to Julia's package manager by using 'Pkg.activate(path)' in notebook
-- Can eliminate startup cost by reusing an existing environment
+
+
+You can disable Pluto's package manager and use Julia's default package manager by including `Pkg.activate(path)` anywhere in notebook (as code, not as text).  
 ```julia
 begin
     import Pkg
@@ -257,6 +343,13 @@ begin
     using Plots, PlutoUI, LinearAlgebra
 end
 ```
+- This reduces startup cost by reusing an existing environment
+- But all packages to be used by the notebook must be included in the specified `Project.toml` and already installed locally.
+"""
+
+# ╔═╡ dda25ec4-fb92-45ad-972b-f1280a9bcee6
+md"""
+### Software Papers
 """
 
 # ╔═╡ 69b1eb2f-77f5-4be8-a7d6-d0a96492426d
@@ -305,9 +398,40 @@ using ExamplePkg
 
 """
 
+# ╔═╡ 92372aba-8622-44c4-ad78-067ca74db521
+blockquote(md"""
+In what circumstance would you want to use `Pkg.develop("ExamplePkg")` over `Pkg.add("ExamplePkg")`?
+""")
+
+# ╔═╡ 579aa237-96c3-4fab-b243-4039fdb33fb5
+md"""
+Develop mode is necessary when you are modifying a package's code.  (Otherwise, julia will use the code for a registered version).    
+"""
+
+# ╔═╡ 534d4ee9-687d-4187-b9e7-fcfb73525b89
+warning_box(md"""Specifying a package in `develop` mode means that your environment is not reproducible.  To ensure reporducibility after making changes to a package (and testing them), you want to:
+- Commit the changes to the public repo for the package, 
+- Assign a new version, 
+- Switch out of develop mode (`Pkg.free("ExamplePkg")`), and
+- Update to the new registered package (`Pkg.update("ExamplePkg")`).
+""")
+
+# ╔═╡ 2ef9d590-2ecd-4123-92ad-d972d5aa8c88
+md"""
+- `Pkg.add` specifies a package (git repository) that will be used 'as-is'.  Changing the files at that local (whether registered package, url or local path) will *not* automatically propagate to your code.  
+- `Pkg.develop` specifies to use (or create if necessary) a local git repository and julia will load code using the current files in that path (even if they are not committed, pushed, or versioned).
+
+Use `add`:
+- to start using a registered package.
+- to make a reproducible environment for your final code/data/figures.
+Use `develop`:
+- while you're working on developing your package
+- to your personal fork on someone else's package, if you need to modify it (and consider submitting a pull request).
+"""
+
 # ╔═╡ 1b50b18f-1ce6-4ea7-81b3-4b1024736509
 md"""
-### Register your package
+## Registering a package
 **Q:** How can a package be added to a registry?"
 
 **A:** [Registrator.jl](https://github.com/JuliaRegistries/Registrator.jl)
@@ -320,24 +444,24 @@ Registrator is a GitHub app that automates creation of registration pull request
 # ╔═╡ de682378-9bf5-46d9-bf35-16480dc61327
 Foldable("Detailed instructions",
 md"""
-## Install Registrator:
+#### Install Registrator:
 
 [![install](https://img.shields.io/badge/-install%20app-blue.svg)](https://github.com/apps/juliateam-registrator/installations/new)
 
 Click on the "install" button above to add the registration bot to your repository
 
-## How to Use
+#### How to Use
 
 There are two ways to use Registrator: a web interface and a GitHub app.
 
-### Via the Web Interface
+##### Via the Web Interface
 
 This workflow supports repositories hosted on either GitHub or GitLab.
 
 Go to https://juliahub.com and log in using your GitHub or GitLab account. Then click on "Register packages" on the left menu.
 There are also more detailed instructions [here](https://juliaregistries.github.io/Registrator.jl/stable/webui/#Usage-(For-Package-Maintainers)-1).
 
-### Via the GitHub App
+##### Via the GitHub App
 
 Unsurprisingly, this method only works for packages whose repositories are hosted on GitHub.
 
@@ -382,19 +506,6 @@ Yes.  But packages need unique identifiers to avoid confusion.
 # ╔═╡ 1daeee93-c9b7-4490-9a44-cbbf1f8f225a
 uuid4()
 
-# ╔═╡ b8184ef1-e4c2-4bf2-a918-c9d3713efe70
-blockquote(md"""
-In the readings, they describe package versions as something like x.y.z, what is the difference between x, y, and z, and how do I decide which number my current update should increment?
-""")
-
-# ╔═╡ 0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
-md"""
-#### [Semantic Versioning 2.0](https://semver.org/):
-- X: Major: Can break things, e.g., improve API. 
-- Y: Minor: Minor changes, new features, bugfixes, refactoring internals, improvements that are unlikly to break things.
-- Z: Patch: Bugfixes, documentation improvements, low-risk performance upgrades
-"""
-
 # ╔═╡ cdebd8ca-fa39-4869-8a37-e172fbdbe762
 blockquote(md"""
 What happens if you use software packages with two different, conflicting "reproducible states", and/or have conflicting dependencies?
@@ -405,33 +516,64 @@ md"""
 Each package should specify it's requirements.  Package manager works to find set of versions that satisfy all requirements.  If impossible, then you''ll get an error message.
 """
 
-# ╔═╡ 316b2027-b3a6-45d6-9b65-e26b4ab42e5e
+# ╔═╡ 2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
 md"""
 # Overview Reproduciblity & Julia 
-- Environment usually contains multiple packages
-   - One environment for each big task (e.g., pipeline for analyzing data from an instrument, performing simulations for one paper)
-- Package contains one module (and often more sub-modules)
+"""
+
+# ╔═╡ 8f0b9223-c042-4a0d-90cc-cbd1a854358a
+blockquote(md"""
+What's the difference between:
+- ...a package and a module?
+- ...a package and an environment?
+""")
+
+# ╔═╡ 3d069f53-6e8f-45fd-98db-0b75a1b56bb6
+md"""
+- An **environment** usually depends on multiple packages:
+   - Is **not** meant to be included as a dependency for another environment.
+   - Is meant to be used as is to maximize reproducibility
+   - Often one environment for each big task (e.g., pipeline for analyzing data from an instrument, performing simulations for one paper)
+   - Can create separate environments for each small task (e.g., different figures), so as to reduce the likelihood of future updates only needed by one task causing problems  for another small task.  
+
+- A **package** contains one public-interfacing module (and often more sub-modules that aren't intended to be called directly)
+   - Is meant to be required by other packages and environments.
    - Set of code that is installed together
    - Perform tasks with similar purpose (e.g., working with common statistical distributions, manipulating positive-definite matrices)
-- Module typically contains multiple functions
-   - Closely related functions (e.g., mutating/non-mutating, basic/advanced interface, different algorithms to compute same thing)
+   - Always includes a `Project.toml` to specify requirements for package
+   - Often includes additional files (e.g., `Manifest.toml`, `Artifacts.toml`, `test/runtests.jl`, `deps/build.jl`, `LICENSE`) that package management system knows to look for and act on.
+
+- A **module** typically provides multiple closely related functions (e.g., mutating/non-mutating, basic/advanced interface, different algorithms to compute same thing)
    - Export functions that are intended for others to call
    - Don't export internal functions that perform each small piece of export functions
    - May not export functions with common names (e.g., `CSV.read`, `CSV.write`)
 
+
 """
 
-# ╔═╡ b717a30b-0aa9-44ff-bcd0-f6c67441d5ce
+# ╔═╡ 0e580f04-b678-4ee7-bb37-3d8723a0900e
 md"""
-# Reproduciblity for multi-language projects
+## Reproduciblity for multi-language projects
+"""
 
-**Q:** Is it possible to add packages that aren't written in Julia?
+# ╔═╡ 0fe5560e-35e5-4133-a790-b85eb212753e
+blockquote(md"""
+Is it possible to add packages that aren't written in Julia?
+""")
 
-**A:** Options:
-- Virtual Machines:  Most flexible & secure, but need to install and maintain _everything_, even the OS, security patches, etc.
-- Containers:  Specify what software to be installed, but assume basic OS is provided.
-   - [Docker](https://docs.docker.com/):  Currently most popular
-   - [Singularity](https://singularity.hpcng.org/):  More common in supercomputing environments
+# ╔═╡ 5a2f59d4-19b9-4ace-be8a-3b5f62fbb6c5
+md"""
+### Option 1:  Provide environment for each language you use.  
+
+E.g., When you install PyCall, Julia installs miniconda .  You can use that to add packages to a conda environments for your python calls.  In theory, your `dep/build.jl` script can automatically setup the conda environment needed for your package.  At least for me, it's easy to to get confused when doing this.
+
+### Option 2: Virtual Machines
+Most flexible & secure, but need to install and maintain _everything_, even the OS, security patches, etc.  Likely requires root.
+
+### Option 3: Containers:  
+Specify what software to be installed, but assume basic OS is provided.
+   - [Docker](https://docs.docker.com/):  Currently most popular for public
+   - [Singularity](https://singularity.hpcng.org/):  More common for supercomputing environments
 """
 
 # ╔═╡ 33470afe-08d0-4639-b1ff-92591a416cb0
@@ -443,7 +585,7 @@ md"""
 
 # ╔═╡ b6b281af-64a1-44b4-a9b6-ee0ba17f5c0b
 md"""
-# Selected Questions
+# Selected Old Questions
 """
 
 # ╔═╡ 44258160-f9e9-4361-bf16-402edb61a65b
@@ -453,25 +595,8 @@ md"""
 **A:**
 It depends:
 - Code for running the simulations in a paper (or series of closely related papers):  Likely a package, perhaps more than one.
-- Code for all figures in a paper:  Likely a git repo, but probably not a package. 
-- Code for one figure:  Not a package.  Likely a script or directory of files in a git repo.
-"""
-
-# ╔═╡ 2ef9d590-2ecd-4123-92ad-d972d5aa8c88
-md"""
-**Q:** What is the difference between the 'add' command and the 'dev' command?  
-And what are the uses of each?
-
-**A:** 
-- `Pkg.add` specifies a package (git repository) that will be used 'as-is'.  Changing the files at that local (whether registered package, url or local path) will *not* automatically propagate to your code.  
-- `Pkg.develop` specifies to use (or create if necessary) a local git repository and julia will load code using the current files in that path (even if they are not committed, pushed, or versioned).
-
-Use `add`:
-- to start using a registered package.
-- to make a reproducible environment for your final code/data/figures.
-Use `develop`:
-- while you're working on developing your package
-- to your personal fork on someone else's package, if you need to modify it (and consider submitting a pull request).
+- Code for all figures in a paper:  Likely a git repo, perhaps multiple directories for multiple environments for different figures, perhaps some code shared accross figures setup as an unregistered package.  Probably not a registered package. 
+- Code snippet for making one figure:  Not a package.  Likely a script or directory of files in a git repo.
 """
 
 # ╔═╡ 74b6d7b2-c09d-4d14-805b-969bdd1f0cbf
@@ -496,9 +621,9 @@ tip(md"""Just like `]` puts you in *Package Manager Mode* from inside the Julia 
 # ╔═╡ 1ce7ef5b-c213-47ba-ac96-9622b62cda61
 md"""
 # Project Updates
-- Second parallel version of code (distributed-memory/GPU/cloud) (due Nov 18)
-- Completed code, documentation, tests, packaging (optional) & reflection (due Dec 2)
-- Class presentations (Nov 29 - Dec 9, [schedule](https://github.com/PsuAstro528/PresentationsSchedule2021/blob/main/README.md) )
+- Second parallel version of code (distributed-memory/GPU/cloud) (due Nov 13)
+- Completed code, documentation, tests, packaging (optional) & reflection (due Nov 19)
+- Class presentations (Nov 27 - Dec 6, [schedule](https://github.com/PsuAstro528/PresentationsSchedule2023/blob/main/README.md) )
 """
 
 # ╔═╡ 24cb813e-af85-435f-9c43-db38e8eaa1d2
@@ -609,11 +734,6 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-
-[compat]
-PlutoTeachingTools = "~0.2.13"
-PlutoTest = "~0.2.2"
-PlutoUI = "~0.7.53"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -622,7 +742,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "dbe60043ccb340ab00018ea7fac757185415b9e8"
+project_hash = "9c93e67b8b56d438c7b1d04aec96aebfe72818b7"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -693,9 +813,9 @@ version = "0.0.4"
 
 [[deps.HypertextLiteral]]
 deps = ["Tricks"]
-git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
+git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.5"
+version = "0.9.4"
 
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
@@ -720,9 +840,9 @@ uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.9.26"
 
 [[deps.LaTeXStrings]]
-git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
+git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.3.1"
+version = "1.3.0"
 
 [[deps.Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Printf", "Requires"]
@@ -851,9 +971,9 @@ version = "0.2.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "db8ec28846dbf846228a32de5a6912c63e2052e3"
+git-tree-sha1 = "e47cd150dbe0443c3a3651bc5b9cbd5576ab75b7"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.53"
+version = "0.7.52"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -988,26 +1108,37 @@ version = "17.4.0+0"
 # ╟─4368a43d-b468-4117-875a-4f1641ed4c48
 # ╟─b860247e-204c-4f8a-9d74-c1350f83313c
 # ╟─a57dbad3-6153-428e-8e79-645297377d75
+# ╟─a284e45d-fa6d-4968-a996-1bc424ab5bfd
+# ╟─cf46018f-506e-4c12-b5ba-d3067e4dde7c
+# ╟─b8184ef1-e4c2-4bf2-a918-c9d3713efe70
+# ╟─0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
+# ╟─af9a18b8-77f3-4ff1-a7bc-c86e2006a937
 # ╟─8f98ed9a-6453-4f59-a20d-753af5c847df
+# ╟─dda25ec4-fb92-45ad-972b-f1280a9bcee6
 # ╟─69b1eb2f-77f5-4be8-a7d6-d0a96492426d
 # ╟─1448a5f5-3338-400f-afab-cea76667367a
 # ╟─0ad3b202-f19c-433e-bb63-81b5e0475561
+# ╟─92372aba-8622-44c4-ad78-067ca74db521
+# ╟─579aa237-96c3-4fab-b243-4039fdb33fb5
+# ╟─534d4ee9-687d-4187-b9e7-fcfb73525b89
+# ╟─2ef9d590-2ecd-4123-92ad-d972d5aa8c88
 # ╟─1b50b18f-1ce6-4ea7-81b3-4b1024736509
 # ╟─de682378-9bf5-46d9-bf35-16480dc61327
 # ╟─898dc66d-0229-474a-a2c8-3163c6e8d0da
 # ╟─52d33a27-6bb4-4325-b047-7625103f2b78
 # ╠═0ed8f5d3-8fa1-4a3a-b945-de4d349a627a
 # ╠═1daeee93-c9b7-4490-9a44-cbbf1f8f225a
-# ╟─b8184ef1-e4c2-4bf2-a918-c9d3713efe70
-# ╟─0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
 # ╟─cdebd8ca-fa39-4869-8a37-e172fbdbe762
 # ╟─0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
-# ╟─316b2027-b3a6-45d6-9b65-e26b4ab42e5e
-# ╟─b717a30b-0aa9-44ff-bcd0-f6c67441d5ce
+# ╟─2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
+# ╟─8f0b9223-c042-4a0d-90cc-cbd1a854358a
+# ╟─3d069f53-6e8f-45fd-98db-0b75a1b56bb6
+# ╟─0e580f04-b678-4ee7-bb37-3d8723a0900e
+# ╟─0fe5560e-35e5-4133-a790-b85eb212753e
+# ╟─5a2f59d4-19b9-4ace-be8a-3b5f62fbb6c5
 # ╟─33470afe-08d0-4639-b1ff-92591a416cb0
 # ╟─b6b281af-64a1-44b4-a9b6-ee0ba17f5c0b
 # ╟─44258160-f9e9-4361-bf16-402edb61a65b
-# ╟─2ef9d590-2ecd-4123-92ad-d972d5aa8c88
 # ╟─74b6d7b2-c09d-4d14-805b-969bdd1f0cbf
 # ╟─de28eb94-6d7d-44c4-848c-5db84495939b
 # ╟─9e6d77dd-4743-428a-b12b-23e8125fcaa9
