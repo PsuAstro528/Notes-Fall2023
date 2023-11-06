@@ -14,6 +14,9 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ 0ed8f5d3-8fa1-4a3a-b945-de4d349a627a
+using UUIDs
+
 # ╔═╡ 1c640715-9bef-4935-9dce-f94ff2a3740b
 begin
 	using PlutoUI, PlutoTest, PlutoTeachingTools
@@ -364,6 +367,20 @@ Release notes:
 ```
 """)
 
+# ╔═╡ 898dc66d-0229-474a-a2c8-3163c6e8d0da
+blockquote(md"""
+If you are starting a different project but have similar to an existing package's requirements, is it possible/worthwhile to reuse the Project.toml or Manifest.toml files (as in copying and moving into a different directory)?
+""")
+
+# ╔═╡ 52d33a27-6bb4-4325-b047-7625103f2b78
+md"""
+Possible:  Yes
+Recommended: No.  Packages need unique identifiers.  
+"""
+
+# ╔═╡ 1daeee93-c9b7-4490-9a44-cbbf1f8f225a
+uuid4()
+
 # ╔═╡ b8184ef1-e4c2-4bf2-a918-c9d3713efe70
 blockquote(md"""
 In the readings, they describe package versions as something like x.y.z, what is the difference between x, y, and z, and how do I decide which number my current update should increment?
@@ -590,6 +607,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [compat]
 PlutoTeachingTools = "~0.2.13"
@@ -603,7 +621,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "e48d3b81fec411867156554db292ac07b7b0251e"
+project_hash = "dbe60043ccb340ab00018ea7fac757185415b9e8"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -975,6 +993,10 @@ version = "17.4.0+0"
 # ╟─0ad3b202-f19c-433e-bb63-81b5e0475561
 # ╟─1b50b18f-1ce6-4ea7-81b3-4b1024736509
 # ╟─de682378-9bf5-46d9-bf35-16480dc61327
+# ╟─898dc66d-0229-474a-a2c8-3163c6e8d0da
+# ╟─52d33a27-6bb4-4325-b047-7625103f2b78
+# ╠═0ed8f5d3-8fa1-4a3a-b945-de4d349a627a
+# ╠═1daeee93-c9b7-4490-9a44-cbbf1f8f225a
 # ╟─b8184ef1-e4c2-4bf2-a918-c9d3713efe70
 # ╟─0af0bba1-cb2e-4b3f-90ef-6a9ac3903399
 # ╟─cdebd8ca-fa39-4869-8a37-e172fbdbe762
