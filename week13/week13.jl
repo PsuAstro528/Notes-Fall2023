@@ -172,6 +172,186 @@ md"""
 - What Astronomy projects use cloud computing?
 """
 
+# ╔═╡ 194cb60f-76e7-491c-8498-b9ba096fd790
+md"""
+# Q&A
+"""
+
+# ╔═╡ 6deb218c-aaf3-4526-877e-259cde09a387
+blockquote(md"How can you set up a global variable in the main file (Jupyter) for use in a function from a module?")
+
+# ╔═╡ 88e4e35f-4d6e-448f-8c3e-d841ac6b3d9f
+module MyModule
+	global A
+    function getA()  
+        global A
+		return A
+    end
+    function setA!(m)  
+        global A = m
+		return A
+    end
+end
+
+# ╔═╡ 92cbd27c-1751-454e-9ae8-aaee77cfe6ab
+MyModule.setA!([1 2; 3 4])
+
+# ╔═╡ 77985a5e-88e1-4e83-bae0-7dd95023b3b4
+MyModule.getA()
+
+# ╔═╡ 8b638aa8-3f29-4b57-9179-ea030bb4308e
+md"""
+#### What's bad about that?
+"""
+
+# ╔═╡ 92caec94-f70c-473d-a602-6d646dd9bd01
+hint(md"""**Q:** What are the consequences of type instability?""")
+
+# ╔═╡ 5ad290ca-37be-4bc9-9b9e-0ae348092bcb
+
+
+# ╔═╡ ba7c3dcf-5fd6-4e9e-a2ab-ec798080402b
+
+
+# ╔═╡ 8b71c74e-838f-4e02-bf9f-fb74d1dfc5f1
+
+
+# ╔═╡ c255e517-6f87-4068-a752-a9695634b0ea
+
+
+# ╔═╡ 5c2680fa-56d7-47da-8540-093e9653bf7f
+@code_warntype MyModule.getA()
+
+# ╔═╡ cc16a21e-8771-4176-937b-389780f56bbd
+MyModule.setA!(17)
+
+# ╔═╡ 679fb815-d330-48dd-9464-9c29a79663e1
+md"""
+### Using type annotations
+"""
+
+# ╔═╡ 9c164d07-d558-4d2e-88c5-c99f5c83f386
+module MyModule2
+	global A
+	function __init__()
+		global A = zeros(Float64,2,2)
+	end
+	function getA()::Matrix{Float64}  
+        global A
+		return A
+    end
+    function setA!(m::Matrix{Float64})  
+        global A = m
+		return A
+    end
+end
+
+# ╔═╡ 9f5ecae7-1cb8-402e-9dad-a99c98319794
+MyModule2.getA()
+
+# ╔═╡ ea7f7ea9-af24-4f2e-8ad9-a636f55c1a0a
+MyModule2.setA!([1.0 2; 3 4])
+
+# ╔═╡ 21f6edd1-6447-450c-9a45-481cb0745289
+MyModule2.getA()
+
+# ╔═╡ 1d1d1488-1a3d-4eeb-ad30-88587c484a53
+md"""
+### Using a global const reference to hold data (that can change) 
+"""
+
+# ╔═╡ 1bfe499a-3948-4438-9f8a-447622904b73
+@code_warntype MyModule2.getA()
+
+# ╔═╡ 933ce89e-1f9e-4ce8-8917-aca567625c90
+module MyModule3
+	global const A = Ref(Matrix{Float64}(undef,0,0))
+	function __init__()
+		A[] = zeros(Float64,2,2)
+	end
+	function getA()  
+        return A[]
+    end
+    function setA!(m::Matrix{Float64})  
+		A[] = m
+		return A[]
+    end
+end
+
+# ╔═╡ bfc5aa39-5393-4635-8bdb-10ec7ddf009f
+MyModule3.getA()
+
+# ╔═╡ a4d24ac7-189d-4975-ac94-9005cb4930ec
+MyModule3.setA!([5 6; 7 8.0])
+
+# ╔═╡ aeefd8da-318e-464b-ac7d-fa9965a850ec
+MyModule3.getA()
+
+# ╔═╡ 2852eeca-a796-4574-99ff-f7c922c84862
+blockquote(md"""Can you go over creating your own packages briefly again, and what specifically should go in "MyProject.jl", for the case of our project (an example would be nice there).""")
+
+# ╔═╡ 0ff04c27-e672-4659-9855-2b50032e3521
+md"""
+Barebones:
+```julia
+import Pkg
+Pkg.generate("MyNewPackage")
+```
+Feature rich:
+- [PkgTemplates](https://github.com/invenia/PkgTemplates.jl)
+```julia 
+using PkgTemplates
+Template(interactive=true)("MyFancyNewPackage")
+```
+"""
+
+# ╔═╡ 9aa3d6b8-5502-4ef6-97d9-f5cbec0c50ca
+md"""
+In `src/MyNewPackage.jl` include:
+- `import` or `using` the packages that your new package will directly depend on. 
+- Functions
+- Types
+- Variables (or constants) with module scope
+- Often do that via `include` statements to keep code well organized.
+- What to export?
+  - Yes:  API to your package (i.e., functions & structs meant to be used by users)
+  - No: Internal functions & structs (i.e., functions meant to be called by other functions in your package )
+"""
+
+# ╔═╡ c697bb88-65cb-4842-84cd-c66d41c59341
+md"""
+Example: 
+```julia
+module lab6
+
+using Distributions
+using QuadGK
+
+include("model_spectrum.jl")
+
+end # module
+```
+"""
+
+# ╔═╡ a9e63186-731b-4264-a6c2-34578c4d5a99
+md"""
+What's in `model_spectrum.jl`?
+```julia
+# Constants
+const limit_kernel_width_default = 10.0
+const speed_of_light = 299792458.0 # m/s
+
+# spectrum.jl:  utils for computing simple spectrum models
+include("spectrum.jl")
+export AbstractSpectrum, SimpleSpectrum, SimulatedSpectrum, ConvolvedSpectrum
+export doppler_shifted_spectrum
+
+# convolution_kernels.jl:  utils for convolution kernels
+include("convolution_kernels.jl")
+export AbstractConvolutionKernel, GaussianConvolutionKernel, GaussianMixtureConvolutionKernel
+```
+"""
+
 # ╔═╡ 8cbeb34d-53a0-4677-982a-349641269559
 md"# Old Questions"
 
@@ -252,302 +432,6 @@ md"""
 **A:** See Lab 9, Ex 1 for step by step for creating a Julia package.  If that's not what you're asking, then please follow-up.
 """
 
-# ╔═╡ 7d9df421-8bdc-4876-90e4-6d8d437a2385
-md"""
-# Reproducibility & Replicability
-"""
-
-# ╔═╡ 6fdd5ec6-3761-4c31-84a3-b9f394a0febb
-md"""
-## Data behind the figures
-- [AAS Journals Data Guide](https://journals.aas.org/data-guide/#machine_readable_tables)
-- [AAS Web converter](https://authortools.aas.org/MRT/upload.html)
-
-- **NASA grants:**  
-   - ``At a minimum the Data Management Plan (DMP) for ROSES must explain how you will release the data needed to reproduce figures, tables and other representations in publications, at the time of publication. Providing this data via supplementary materials with the journal is one really easy way to do this and it has the advantage that the data and the figures are linked together in perpetuity without any ongoing effort on your part.'' and
-   - ``Software, whether a stand-alone program, an enhancement to existing code, or a module that interfaces with existing codes, created as part of a ROSES award, should be made publicly available when it is practical and feasible to do so, and when there is scientific utility in doing so... SMD expects that the source code, with associated documentation sufficient to enable use of the code, will be made publicly available as Open Source Software (OSS) under an appropriately permissive license (e.g., Apache-2, BSD-3-Clause, GPL). This includes all software developed with SMD funding used in the production of data products, as well as software developed to discover, access, visualize, and transform NASA data.'' -- [NASA SARA DMP FAQ](https://science.nasa.gov/researchers/sara/faqs/dmp-faq-roses)
-
-- **NSF:** 
-   - ``Investigators are expected to share with other researchers, at no more than incremental cost and within a reasonable time, the primary data, samples, physical collections and other supporting materials created or gathered in the course of work under NSF grants. Grantees are expected to encourage and facilitate such sharing.'' -- [NSF Data Management Plan Requirements](https://www.nsf.gov/bfa/dias/policy/dmp.jsp)
-   - ``Providing software to read and analyze scientific data products can greatly increase value of these products. Investigators should use one of many software collaboration sites, like Github.com. These sites enable code sharing, collaboration and documentation at one location.'' -- [AST-specific Advice to PIs on the DMP](https://www.nsf.gov/bfa/dias/policy/dmpdocs/ast.pdf)
-
-"""
-
-# ╔═╡ 53a16e4d-ed25-4db3-9335-d79212a33f6a
-md"""
-## How to share code
-### Old-school
-- Source code for a few functions published as an appendix.
-- Source code avaliable upon request.
-- Source code avaliable from my website.
-
-### Modern
-Practical sharing of evolving code:
-- [GitHub](http://github.com/)
-- Institutional Git server (e.g., [PSU's GitLab](https://git.psu.edu/help/#getting-started-with-gitlab))
-Archiving of code (& data):
-- Dedicated archive with
-   - Long-term plan
-   - [Digital Object Identifier (DOI)](https://www.doi.org/) for your work
-   - Standard file format
-   - Metadata
-- Examples:
-   - [Zenodo](https://zenodo.org/) (by CERN)
-   - [Dataverse](https://dataverse.harvard.edu/) (by Harvard)
-   - [ScholarSphere](https://scholarsphere.psu.edu/) (by Penn State Libraries)
-   - [Data Commons](https://www.datacommons.psu.edu/) (by Penn State EMS)
-"""
-
-# ╔═╡ 3f605c86-3083-4c38-bcb7-ba2eb93c867b
-md"""
-## Problems with sharing non-trivial codes
-- Compiling for each processor/OS
-- Linking to libraries
-- Installing libraries that are needed
-- Multi-step instructions (different for each OS) that become out-of-date
-"""
-
-# ╔═╡ 53a9051b-2f97-4d19-906e-0ba11e85a451
-md"""
-# Package managers
-- Find package you request
-- Indentify dependancies (direct & indirect).  
-- Find versions that satisfy all requirements
-- Download requested packaged & dependancies.
-- Install requested packaged & dependancies.
-- Perform any custom build steps.  
-"""
-
-# ╔═╡ d69a33e3-ef81-4aa2-9f31-4fbea2e74780
-md"""
-### What if you have two projects?
-- Could let both project think they depend on everything the other depends on.
-- If a dependancy breaks, which project(s) break?
-- What if two projects require different versions?
-⇒ Environments
-"""
-
-# ╔═╡ 92877d81-1545-4787-83c2-8dee3d43de6b
-md"""
-## Environments
-Environment llow you to have multiple versions of packages installed and rapidly specify which versions you want made avaliable for the current session.  In Julia, 
-- Project.toml:  Specifies direct dependencies & version constaints (required)
-
-- Manifest.toml:  Specifies precise version of direct & indirect dependancies, so as to offer a fully reproducible environment (optional)
-
-- If no Manifest.toml, then package manager can find most recent versions that satisfy Project.toml requirements.
-
-`julia`
-starts julia with default environment (separate environment for each minor version number, e.g., 1.6)
-
-`julia --project=.` or `julia --project` starts julia using environment specified by Project.toml and Manifest.toml in current directory (if don't exist, will create them).
-
-"""
-
-# ╔═╡ 085a5b76-ab3e-4447-b6a3-df4bf3f0d9e9
-md"""
-**Q:** What is a .toml file?
-
-**A:** [Tom's Obvious Markup Language](https://github.com/toml-lang/toml).  
-"""
-
-# ╔═╡ b860247e-204c-4f8a-9d74-c1350f83313c
-md"""
-**Project.toml** from Lab 3:
-
-```code
-name = "lab3"
-uuid = "3355e5e9-99a6-4e94-be24-d3293f18bccc"
-authors = ["Eric Ford <ebf11@psu.edu>"]
-version = "0.1.0"
-
-[deps]
-BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
-FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
-PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
-PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
-Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
-Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-```
-"""
-
-# ╔═╡ a57dbad3-6153-428e-8e79-645297377d75
-md"""
-**Manifest.toml** from Lab 3:
-```code
-# This file is machine-generated - editing it directly is not advised
-
-[[Adapt]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "84918055d15b3114ede17ac6a7182f68870c16f7"
-uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.3.1"
-
-[[ArgTools]]
-uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
-
-[[Artifacts]]
-uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-
-[[Base64]]
-uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[BenchmarkTools]]
-deps = ["JSON", "Logging", "Printf", "Statistics", "UUIDs"]
-git-tree-sha1 = "aa3aba5ed8f882ed01b71e09ca2ba0f77f44a99e"
-uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.1.3"
-
-[[Bzip2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "c3598e525718abcc440f69cc6d5f60dda0a1b61e"
-uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
-version = "1.0.6+5"
-
-[[CFITSIO]]
-deps = ["CFITSIO_jll"]
-git-tree-sha1 = "c860f5545064216f86aa3365ec186ce7ced6a935"
-uuid = "3b1b4be9-1499-4b22-8d78-7db3344d1961"
-version = "1.3.0"
-
-[[CFITSIO_jll]]
-deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "Pkg"]
-git-tree-sha1 = "2fabb5fc48d185d104ca7ed7444b475705993447"
-uuid = "b3e40c51-02ae-5482-8a39-3ace5868dcf4"
-version = "3.49.1+0"
-
-[[CSV]]
-deps = ["Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
-git-tree-sha1 = "b83aa3f513be680454437a0eee21001607e5d983"
-uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.8.5"
-...
-```
-"""
-
-# ╔═╡ 8f98ed9a-6453-4f59-a20d-753af5c847df
-md"""
-## Pluto & Package Management
-"""
-
-# ╔═╡ 0ad3b202-f19c-433e-bb63-81b5e0475561
-md"""
-# Creating your own package
-- Create a bare-bones package (Project.toml and `src/ExamplePkg.jl` that contains a module named `ExamplePkg`) by 
-```shell
-mkdir fresh_directory
-cd fresh_directory
-julia -e 'using Pkg; Pkg.generate("ExamplePkg")'
-```
-- Add packages that your package will depend on.
-```julia
-using Pkg
-Pkg.activate(".")
-Pkg.add(["CSV","DataFrames"])
-```
-- Install packages that your package depends on (and generates Manifest.toml if missing):
-```julia
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-```
-- Access your barebones package by
-```julia
-using Pkg
-Pkg.activate(".")
-using ExamplePkg
-```
-- In [Lab 9](https://github.com/PsuAstro528/lab9-start) will connect to GitHub and add other key package components (e.g., license, tests, etc.)
-
-"""
-
-# ╔═╡ 0b5dd506-d79a-4094-8c9e-e885f0273ab1
-md"""
-### Register your package
-**Q:** How can a package be added to a registry? Say I were to write a new package, that I want to release into the world-how would I "add it to a registry?"
-
-**A:** [Registrator.jl](https://github.com/JuliaRegistries/Registrator.jl)
-
-!["amelia robot logo"](https://raw.githubusercontent.com/JuliaRegistries/Registrator.jl/master/graphics/logo.png)
-
-Registrator is a GitHub app that automates creation of registration pull requests for your julia packages to the [General](https://github.com/JuliaRegistries/General) registry. Install the app below!
-
-## Install Registrator:
-
-[![install](https://img.shields.io/badge/-install%20app-blue.svg)](https://github.com/apps/juliateam-registrator/installations/new)
-
-Click on the "install" button above to add the registration bot to your repository
-
-## How to Use
-
-There are two ways to use Registrator: a web interface and a GitHub app.
-
-### Via the Web Interface
-
-This workflow supports repositories hosted on either GitHub or GitLab.
-
-Go to https://juliahub.com and log in using your GitHub or GitLab account. Then click on "Register packages" on the left menu.
-There are also more detailed instructions [here](https://juliaregistries.github.io/Registrator.jl/stable/webui/#Usage-(For-Package-Maintainers)-1).
-
-### Via the GitHub App
-
-Unsurprisingly, this method only works for packages whose repositories are hosted on GitHub.
-
-The procedure for registering a new package is the same as for releasing a new version.  
-
-If the registration bot is not added to the repository, `@JuliaRegistrator register` will not result in package registration.
-
-1. Click on the "install" button above to add the registration bot to your repository
-2. Set the [`(Julia)Project.toml`](Project.toml) version field in your repository to your new desired `version`.
-3. Comment `@JuliaRegistrator register` on the commit/branch you want to register (e.g. like [here](https://github.com/JuliaRegistries/Registrator.jl/issues/61#issuecomment-483486641) or [here](https://github.com/chakravala/Grassmann.jl/commit/3c3a92610ebc8885619f561fe988b0d985852fce#commitcomment-33233149)).
-4. If something is incorrect, adjust, and redo step 2.
-5. If the automatic tests pass, but a moderator makes suggestions (e.g., manually updating your `(Julia)Project.toml` to include a [compat] section with version requirements for dependencies), then incorporate suggestions as you see fit into a new commit, and redo step 2 _for the new commit_.  You don't need to do anything to close out the old request.
-6. Finally, either rely on the [TagBot GitHub Action](https://github.com/marketplace/actions/julia-tagbot) to tag and make a github release or alternatively tag the release manually.
-
-Registrator will look for the project file in the master branch by default, and will use the version set in the `(Julia)Project.toml` file via, for example, `version = "0.1.0"`. To use a custom branch comment with:
-
-```
-@JuliaRegistrator register branch=name-of-your-branch
-```
-
-```
-@JuliaRegistrator register
-
-Release notes:
-
-- Check out my new features!
-```
-"""
-
-# ╔═╡ 44258160-f9e9-4361-bf16-402edb61a65b
-md"""
-**Q:** Is developing a package something that we will likely do many times in the future if we are writing new code for our projects? Or is it only something we would use if we are writing code that we want lots of other researchers to be able to use?
-
-**A:**
-It depends:
-- Code for running the simulations in a paper (or series of closely related papers):  Likely a package, perhaps more than one.
-- Code for all figures in a paper:  Likely a git repo, but probably not a package. 
-- Code for one figure:  Not a package.  Likely a script or directory of files in a git repo.
-"""
-
-# ╔═╡ 1ce7ef5b-c213-47ba-ac96-9622b62cda61
-md"""
-# Project Updates
-- Second parallel version of code (distributed-memory/GPU/cloud) (due Nov 18)
-- Completed code, documentation, tests, packaging (optional) & reflection (due Dec 2)
-- Class presentations (Nov 29 - Dec 9, [schedule](https://github.com/PsuAstro528/PresentationsSchedule2021/blob/main/README.md) )
-"""
-
 # ╔═╡ 24cb813e-af85-435f-9c43-db38e8eaa1d2
 md"""## Project Rubrics
 
@@ -599,8 +483,6 @@ PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-PlutoTeachingTools = "~0.1.4"
-PlutoTest = "~0.1.2"
 PlutoUI = "~0.7.16"
 """
 
@@ -610,7 +492,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "eb900f0408cb3b6d5e359acb7c3fd7118be2e117"
+project_hash = "0a2f1a7d2aefb3a56df0c18ccf7ebee67ade6594"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -714,20 +596,16 @@ version = "1.3.1"
 
 [[deps.Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Printf", "Requires"]
-git-tree-sha1 = "8c57307b5d9bb3be1ff2da469063628631d4d51e"
+git-tree-sha1 = "f428ae552340899a935973270b8d98e5a31c49fe"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.15.21"
+version = "0.16.1"
 
     [deps.Latexify.extensions]
     DataFramesExt = "DataFrames"
-    DiffEqBiologicalExt = "DiffEqBiological"
-    ParameterizedFunctionsExt = "DiffEqBase"
     SymEngineExt = "SymEngine"
 
     [deps.Latexify.weakdeps]
     DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-    DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
-    DiffEqBiological = "eb300fae-53e8-50a0-950c-e21f52c2b7e0"
     SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 
 [[deps.LibCURL]]
@@ -831,15 +709,15 @@ version = "0.1.6"
 
 [[deps.PlutoTeachingTools]]
 deps = ["Downloads", "HypertextLiteral", "LaTeXStrings", "Latexify", "Markdown", "PlutoLinks", "PlutoUI", "Random"]
-git-tree-sha1 = "67c917d383c783aeadd25babad6625b834294b30"
+git-tree-sha1 = "542de5acb35585afcf202a6d3361b430bc1c3fbd"
 uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
-version = "0.1.7"
+version = "0.2.13"
 
 [[deps.PlutoTest]]
 deps = ["HypertextLiteral", "InteractiveUtils", "Markdown", "Test"]
-git-tree-sha1 = "b7da10d62c1ffebd37d4af8d93ee0003e9248452"
+git-tree-sha1 = "17aa9b81106e661cffa1c4c36c17ee1c50a86eda"
 uuid = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
-version = "0.1.2"
+version = "0.2.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -884,9 +762,9 @@ version = "1.3.0"
 
 [[deps.Revise]]
 deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "Requires", "UUIDs", "Unicode"]
-git-tree-sha1 = "ba168f8fc36bf83c8d0573d464b7aab0f8a81623"
+git-tree-sha1 = "62fbfbbed77a20e9390c4f02219cb3b11d21708d"
 uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
-version = "3.5.7"
+version = "3.5.8"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -978,28 +856,42 @@ version = "17.4.0+0"
 # ╟─6d3ee824-b4e1-466b-b611-7a6c4bfe196a
 # ╟─bbe742aa-8f41-4833-8b5b-5c79cf09b1ee
 # ╟─f6a0d516-5557-4830-9729-ef2687ffe550
+# ╟─194cb60f-76e7-491c-8498-b9ba096fd790
+# ╟─6deb218c-aaf3-4526-877e-259cde09a387
+# ╠═88e4e35f-4d6e-448f-8c3e-d841ac6b3d9f
+# ╠═92cbd27c-1751-454e-9ae8-aaee77cfe6ab
+# ╠═77985a5e-88e1-4e83-bae0-7dd95023b3b4
+# ╟─8b638aa8-3f29-4b57-9179-ea030bb4308e
+# ╟─92caec94-f70c-473d-a602-6d646dd9bd01
+# ╠═5ad290ca-37be-4bc9-9b9e-0ae348092bcb
+# ╠═ba7c3dcf-5fd6-4e9e-a2ab-ec798080402b
+# ╠═8b71c74e-838f-4e02-bf9f-fb74d1dfc5f1
+# ╠═c255e517-6f87-4068-a752-a9695634b0ea
+# ╠═5c2680fa-56d7-47da-8540-093e9653bf7f
+# ╠═cc16a21e-8771-4176-937b-389780f56bbd
+# ╟─679fb815-d330-48dd-9464-9c29a79663e1
+# ╠═9c164d07-d558-4d2e-88c5-c99f5c83f386
+# ╠═9f5ecae7-1cb8-402e-9dad-a99c98319794
+# ╠═ea7f7ea9-af24-4f2e-8ad9-a636f55c1a0a
+# ╠═21f6edd1-6447-450c-9a45-481cb0745289
+# ╟─1d1d1488-1a3d-4eeb-ad30-88587c484a53
+# ╠═1bfe499a-3948-4438-9f8a-447622904b73
+# ╠═933ce89e-1f9e-4ce8-8917-aca567625c90
+# ╠═bfc5aa39-5393-4635-8bdb-10ec7ddf009f
+# ╠═a4d24ac7-189d-4975-ac94-9005cb4930ec
+# ╠═aeefd8da-318e-464b-ac7d-fa9965a850ec
+# ╟─2852eeca-a796-4574-99ff-f7c922c84862
+# ╟─0ff04c27-e672-4659-9855-2b50032e3521
+# ╟─9aa3d6b8-5502-4ef6-97d9-f5cbec0c50ca
+# ╟─c697bb88-65cb-4842-84cd-c66d41c59341
+# ╟─a9e63186-731b-4264-a6c2-34578c4d5a99
 # ╟─8cbeb34d-53a0-4677-982a-349641269559
 # ╟─b59287dc-5271-492b-82ad-23e726442a54
 # ╟─b2a15aa0-b2cb-4a4d-a612-4cbd3ee6a5f3
 # ╟─e6e7e24e-ff66-47ac-bbfb-63d9059dcf7a
 # ╟─e2d34d5c-1298-483e-b7fe-fe2d21a385fc
-# ╟─7d9df421-8bdc-4876-90e4-6d8d437a2385
-# ╟─6fdd5ec6-3761-4c31-84a3-b9f394a0febb
-# ╟─53a16e4d-ed25-4db3-9335-d79212a33f6a
-# ╟─3f605c86-3083-4c38-bcb7-ba2eb93c867b
-# ╟─53a9051b-2f97-4d19-906e-0ba11e85a451
-# ╟─d69a33e3-ef81-4aa2-9f31-4fbea2e74780
-# ╟─92877d81-1545-4787-83c2-8dee3d43de6b
-# ╟─085a5b76-ab3e-4447-b6a3-df4bf3f0d9e9
-# ╟─b860247e-204c-4f8a-9d74-c1350f83313c
-# ╟─a57dbad3-6153-428e-8e79-645297377d75
-# ╟─8f98ed9a-6453-4f59-a20d-753af5c847df
-# ╟─0ad3b202-f19c-433e-bb63-81b5e0475561
-# ╟─0b5dd506-d79a-4094-8c9e-e885f0273ab1
-# ╟─44258160-f9e9-4361-bf16-402edb61a65b
-# ╟─1ce7ef5b-c213-47ba-ac96-9622b62cda61
 # ╟─24cb813e-af85-435f-9c43-db38e8eaa1d2
 # ╟─8759b216-cc38-42ed-b85c-04d508579c54
-# ╠═1c640715-9bef-4935-9dce-f94ff2a3740b
+# ╟─1c640715-9bef-4935-9dce-f94ff2a3740b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
