@@ -539,6 +539,21 @@ Pkg.instantiate()
 ```
 """
 
+# ╔═╡ 91bdebcb-f2ef-40b9-95b1-bdbefc0a7723
+md"""
+## Student Educational Experience Questionnaire
+1. In a few sentences, please provide feedback on your learning experience in this course. Consider the assignments and feedback you received, materials, learning activities and interactions with peers, your interactions with the instructor and other aspects related to your learning experience that you want to mention.
+2. The overall structure of the course (content and materials, assignments, activities) promoted a meaningful learning experience for me.  [multiiple choice]
+3. The instructor created a welcoming and inclusive environment. [multiiple choice]
+4. In the space provided, please provide an explanation for your rating in #3. 
+
+5. If your course required materials, which materials or resources enhanced your learning? How? [Instructor Only]
+6. What are the most important things you learned in this course? [Instructor Only]
+7. Do you have any recommendations for this course?  [Instructor Only]
+
+#### Should I add a custom survey?
+"""
+
 # ╔═╡ 2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
 md"""
 # Overview Reproduciblity & Julia 
@@ -1156,6 +1171,7 @@ version = "17.4.0+0"
 # ╟─0b1b8e65-fe71-4f72-8d84-95d0b22f48a4
 # ╟─192ffc58-34cf-4d90-b68d-998b9d299c2b
 # ╟─9516f9b4-1d17-490c-ac51-1c04859ec553
+# ╟─91bdebcb-f2ef-40b9-95b1-bdbefc0a7723
 # ╟─2d63cb1a-2bbb-435c-b672-8b6a3f74e6ac
 # ╟─8f0b9223-c042-4a0d-90cc-cbd1a854358a
 # ╟─3d069f53-6e8f-45fd-98db-0b75a1b56bb6
