@@ -28,6 +28,9 @@ ChooseDisplayMode()
 # ╔═╡ afe9b7c1-d031-4e1f-bd5b-5aeed30d7048
 md"ToC on side $(@bind toc_aside CheckBox(;default=true))"
 
+# ╔═╡ 080d3a94-161e-4482-9cf4-b82ffb98d0ed
+TableOfContents(aside=toc_aside)
+
 # ╔═╡ 959f2c12-287c-4648-a585-0c11d0db812d
 md"""
 # Week 13 Discussion Topics
@@ -169,177 +172,185 @@ md"""
 - What Astronomy projects use cloud computing?
 """
 
-# ╔═╡ a21f8aaa-e4ff-41c3-9246-05efe234d8e6
+# ╔═╡ 194cb60f-76e7-491c-8498-b9ba096fd790
 md"""
-# Q&A 
+# Q&A
 """
 
-# ╔═╡ 8eac649e-b2e4-408b-8f45-e2a1f7f2c97d
+# ╔═╡ 6deb218c-aaf3-4526-877e-259cde09a387
 blockquote(md"How can you set up a global variable in the main file (Jupyter) for use in a function from a module?")
 
-# ╔═╡ 6afe43d1-8901-42aa-86de-b230444111c1
-md"""
-### First step
-"""
-
-# ╔═╡ 8587c3ee-5378-45b6-8f75-7dc6e544e7cd
+# ╔═╡ 88e4e35f-4d6e-448f-8c3e-d841ac6b3d9f
 module MyModule
 	global A
-    function getA()
+    function getA()  
         global A
 		return A
-    end 
-	function setA!(m)
-        global A = m
     end
-	export getA, setA!
+    function setA!(m)  
+        global A = m
+		return A
+    end
 end
 
-# ╔═╡ 838420a9-4114-4bef-b35f-9e9a1fc4b8c5
-let
-	MyModule.setA!([1 2 3; 4 5 6])
-	MyModule.getA()
-end
+# ╔═╡ 92cbd27c-1751-454e-9ae8-aaee77cfe6ab
+MyModule.setA!([1 2; 3 4])
 
-# ╔═╡ 5381eb5e-d163-4e48-b904-b69a213c253e
-md"""
-### What's not good about this?
-"""
-
-# ╔═╡ 6f17e7fd-85e1-4b55-9dcf-960df162678c
-
-
-# ╔═╡ 01d4b4f0-f5dd-4be9-91e3-9200ed551b42
-
-
-# ╔═╡ 05a678d1-363d-4151-9b9e-8ba6f5c76fd7
-
-
-# ╔═╡ 13ea0797-b58d-4d54-8b7d-61c331fd9ea0
-
-
-# ╔═╡ 66a474f7-ecc8-4ed4-a340-727ee4d5c0b5
-
-
-# ╔═╡ 54f79ea7-7a1e-41b0-9634-850337d84c9a
-
-
-# ╔═╡ 16dcafb9-24fe-49dc-8902-39450eaef3f7
-
-
-# ╔═╡ f48b481f-d227-4288-815d-4c5f07a016a7
-
-
-# ╔═╡ c5bb1e1f-0624-4e57-b9bc-ca4c1437e8b9
-
-
-# ╔═╡ 0295c2c0-7d6f-4d3a-a5c8-981219fd2e6e
-
-
-# ╔═╡ 411fbd86-8f60-40b4-9128-33cebf8a655b
-
-
-# ╔═╡ 4b9844c9-dc74-47f0-b710-9e7125767f46
-
-
-# ╔═╡ 4c3b723e-2edc-4ce0-a19b-fa9fb626fa9c
-
-
-# ╔═╡ 015792a1-975f-4f3a-aca3-c4a7c5076f2f
-
-
-# ╔═╡ 3e5a3995-2076-437a-80d9-e7cfc59d8d21
-
-
-# ╔═╡ 550bb359-ccbf-4250-8790-2524e7444489
-
-
-# ╔═╡ 188ecae8-0b84-4885-bdc0-897171565884
-
-
-# ╔═╡ f74656de-ac2a-47aa-b128-cb0e989d71d7
-MyModule.setA!(17)
-
-# ╔═╡ 09b311fc-54d6-42b7-9b5a-2f076e06bc1d
+# ╔═╡ 77985a5e-88e1-4e83-bae0-7dd95023b3b4
 MyModule.getA()
 
-# ╔═╡ 8106ba0b-49c5-4244-a398-e2e304c9c554
-@code_warntype(MyModule.getA())
-
-# ╔═╡ 47ae5cdb-e35a-4ef3-93d4-17acd6b83c49
+# ╔═╡ 8b638aa8-3f29-4b57-9179-ea030bb4308e
 md"""
-### Option 1: Add `__init__()` & Type annotations
+#### What's bad about that?
 """
 
-# ╔═╡ 96ce7d9c-bd49-4f82-a5df-004ef4fc96d9
+# ╔═╡ 92caec94-f70c-473d-a602-6d646dd9bd01
+hint(md"""**Q:** What are the consequences of type instability?""")
+
+# ╔═╡ 5ad290ca-37be-4bc9-9b9e-0ae348092bcb
+
+
+# ╔═╡ ba7c3dcf-5fd6-4e9e-a2ab-ec798080402b
+
+
+# ╔═╡ 8b71c74e-838f-4e02-bf9f-fb74d1dfc5f1
+
+
+# ╔═╡ c255e517-6f87-4068-a752-a9695634b0ea
+
+
+# ╔═╡ 5c2680fa-56d7-47da-8540-093e9653bf7f
+@code_warntype MyModule.getA()
+
+# ╔═╡ cc16a21e-8771-4176-937b-389780f56bbd
+MyModule.setA!(17)
+
+# ╔═╡ 679fb815-d330-48dd-9464-9c29a79663e1
+md"""
+### Using type annotations
+"""
+
+# ╔═╡ 9c164d07-d558-4d2e-88c5-c99f5c83f386
 module MyModule2
 	global A
 	function __init__()
-    	global A
-		A = [1 2; 3 4]
+		global A = zeros(Float64,2,2)
 	end
-    function getA()
+	function getA()::Matrix{Float64}  
         global A
-		return A::Matrix{Int64}
-    end 
-	function setA!(m::Matrix)
+		return A
+    end
+    function setA!(m::Matrix{Float64})  
         global A = m
 		return A
     end
-	export getA, setA!
 end
 
-# ╔═╡ a1bc6ccc-c955-45f4-8a86-5953296ce1fc
+# ╔═╡ 9f5ecae7-1cb8-402e-9dad-a99c98319794
 MyModule2.getA()
 
-# ╔═╡ 67ec72c6-7674-4e09-9efa-754ab7d331ad
-let
-	MyModule2.setA!([1 2 3; 4 5 6])
-	MyModule2.getA()
-end
+# ╔═╡ ea7f7ea9-af24-4f2e-8ad9-a636f55c1a0a
+MyModule2.setA!([1.0 2; 3 4])
 
-# ╔═╡ ebda1530-72b6-4e90-a108-9f73c8780207
-@test_broken MyModule2.setA!(17)
+# ╔═╡ 21f6edd1-6447-450c-9a45-481cb0745289
+MyModule2.getA()
 
-# ╔═╡ 05b0c9c6-5ad7-4ae5-a9ac-195d0e988ebb
-@code_warntype MyModule2.getA()
-
-# ╔═╡ 5e70ae19-4dd1-46f4-8d5b-32198932ea40
+# ╔═╡ 1d1d1488-1a3d-4eeb-ad30-88587c484a53
 md"""
-### Global const reference to collection with data that can change
+### Using a global const reference to hold data (that can change) 
 """
 
-# ╔═╡ 74678d76-976e-40e0-adf4-3083dacebb6c
-module MyModule3
-	global const A = Ref{Matrix{Float64}}()
+# ╔═╡ 1bfe499a-3948-4438-9f8a-447622904b73
+@code_warntype MyModule2.getA()
 
+# ╔═╡ 933ce89e-1f9e-4ce8-8917-aca567625c90
+module MyModule3
+	global const A = Ref(Matrix{Float64}(undef,0,0))
 	function __init__()
-    	A[] = [1.0 2.0; 3.0 4.0]
+		A[] = zeros(Float64,2,2)
 	end
-	function getA()
-		return A[]
-    end 
-	function setA!(m::Matrix)
+	function getA()  
+        return A[]
+    end
+    function setA!(m::Matrix{Float64})  
 		A[] = m
 		return A[]
     end
-	export getA, setA!
 end
 
-# ╔═╡ 672db5ec-f52d-427d-9a3b-be758ffc7d73
+# ╔═╡ bfc5aa39-5393-4635-8bdb-10ec7ddf009f
 MyModule3.getA()
 
-# ╔═╡ fbe90769-106a-4bad-b0ff-22881ae28668
-MyModule3.setA!([5 6; 7 8 ])
+# ╔═╡ a4d24ac7-189d-4975-ac94-9005cb4930ec
+MyModule3.setA!([5 6; 7 8.0])
 
-# ╔═╡ 7a7e854c-e8b2-4e42-a821-6825dee99f7b
+# ╔═╡ aeefd8da-318e-464b-ac7d-fa9965a850ec
 MyModule3.getA()
 
-# ╔═╡ 6badd695-fd44-4c6e-b3b8-eb4a007007b8
-@code_warntype(MyModule3.getA())
+# ╔═╡ 2852eeca-a796-4574-99ff-f7c922c84862
+blockquote(md"""Can you go over creating your own packages briefly again, and what specifically should go in "MyProject.jl", for the case of our project (an example would be nice there).""")
 
-# ╔═╡ afcbe6f7-14fa-43d5-bb0a-e649cc82f6c1
+# ╔═╡ 0ff04c27-e672-4659-9855-2b50032e3521
+md"""
+Barebones:
+```julia
+import Pkg
+Pkg.generate("MyNewPackage")
+```
+Feature rich:
+- [PkgTemplates](https://github.com/invenia/PkgTemplates.jl)
+```julia 
+using PkgTemplates
+Template(interactive=true)("MyFancyNewPackage")
+```
+"""
 
+# ╔═╡ 9aa3d6b8-5502-4ef6-97d9-f5cbec0c50ca
+md"""
+In `src/MyNewPackage.jl` include:
+- `import` or `using` the packages that your new package will directly depend on. 
+- Functions
+- Types
+- Variables (or constants) with module scope
+- Often do that via `include` statements to keep code well organized.
+- What to export?
+  - Yes:  API to your package (i.e., functions & structs meant to be used by users)
+  - No: Internal functions & structs (i.e., functions meant to be called by other functions in your package )
+"""
+
+# ╔═╡ c697bb88-65cb-4842-84cd-c66d41c59341
+md"""
+Example: 
+```julia
+module lab6
+
+using Distributions
+using QuadGK
+
+include("model_spectrum.jl")
+
+end # module
+```
+"""
+
+# ╔═╡ a9e63186-731b-4264-a6c2-34578c4d5a99
+md"""
+What's in `model_spectrum.jl`?
+```julia
+# Constants
+const limit_kernel_width_default = 10.0
+const speed_of_light = 299792458.0 # m/s
+
+# spectrum.jl:  utils for computing simple spectrum models
+include("spectrum.jl")
+export AbstractSpectrum, SimpleSpectrum, SimulatedSpectrum, ConvolvedSpectrum
+export doppler_shifted_spectrum
+
+# convolution_kernels.jl:  utils for convolution kernels
+include("convolution_kernels.jl")
+export AbstractConvolutionKernel, GaussianConvolutionKernel, GaussianMixtureConvolutionKernel
+```
+"""
 
 # ╔═╡ 8cbeb34d-53a0-4677-982a-349641269559
 md"# Old Questions"
@@ -413,6 +424,14 @@ md"""
 """
 
 
+# ╔═╡ e2d34d5c-1298-483e-b7fe-fe2d21a385fc
+md"""
+### Others Q&As:
+**Q:** Can you go over again how to implement packages such that anyone who is sent a code can also run it effectively?
+
+**A:** See Lab 9, Ex 1 for step by step for creating a Julia package.  If that's not what you're asking, then please follow-up.
+"""
+
 # ╔═╡ 24cb813e-af85-435f-9c43-db38e8eaa1d2
 md"""## Project Rubrics
 
@@ -456,9 +475,6 @@ md"""## Project Rubrics
 # ╔═╡ 8759b216-cc38-42ed-b85c-04d508579c54
 md"# Helper Code"
 
-# ╔═╡ 080d3a94-161e-4482-9cf4-b82ffb98d0ed
-TableOfContents(aside=toc_aside)
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -467,7 +483,6 @@ PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-PlutoTest = "~0.2.2"
 PlutoUI = "~0.7.16"
 """
 
@@ -477,7 +492,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "73b2beb4c5bb5da05f2bccc29cf416f2bdf06332"
+project_hash = "0a2f1a7d2aefb3a56df0c18ccf7ebee67ade6594"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -671,9 +686,9 @@ version = "1.6.2"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "a935806434c9d4c506ba941871b327b96d41f2bf"
+git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.0"
+version = "2.7.2"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -829,6 +844,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─0b431bf7-1f57-40c4-ad0c-012cbdbf9528
+# ╟─080d3a94-161e-4482-9cf4-b82ffb98d0ed
 # ╟─a21b553b-eecb-4105-a0ed-d936e500788b
 # ╟─afe9b7c1-d031-4e1f-bd5b-5aeed30d7048
 # ╟─959f2c12-287c-4648-a585-0c11d0db812d
@@ -840,52 +856,42 @@ version = "17.4.0+0"
 # ╟─6d3ee824-b4e1-466b-b611-7a6c4bfe196a
 # ╟─bbe742aa-8f41-4833-8b5b-5c79cf09b1ee
 # ╟─f6a0d516-5557-4830-9729-ef2687ffe550
-# ╟─a21f8aaa-e4ff-41c3-9246-05efe234d8e6
-# ╟─8eac649e-b2e4-408b-8f45-e2a1f7f2c97d
-# ╟─6afe43d1-8901-42aa-86de-b230444111c1
-# ╠═8587c3ee-5378-45b6-8f75-7dc6e544e7cd
-# ╠═838420a9-4114-4bef-b35f-9e9a1fc4b8c5
-# ╟─5381eb5e-d163-4e48-b904-b69a213c253e
-# ╠═6f17e7fd-85e1-4b55-9dcf-960df162678c
-# ╠═01d4b4f0-f5dd-4be9-91e3-9200ed551b42
-# ╠═05a678d1-363d-4151-9b9e-8ba6f5c76fd7
-# ╠═13ea0797-b58d-4d54-8b7d-61c331fd9ea0
-# ╠═66a474f7-ecc8-4ed4-a340-727ee4d5c0b5
-# ╠═54f79ea7-7a1e-41b0-9634-850337d84c9a
-# ╠═16dcafb9-24fe-49dc-8902-39450eaef3f7
-# ╠═f48b481f-d227-4288-815d-4c5f07a016a7
-# ╠═c5bb1e1f-0624-4e57-b9bc-ca4c1437e8b9
-# ╠═0295c2c0-7d6f-4d3a-a5c8-981219fd2e6e
-# ╠═411fbd86-8f60-40b4-9128-33cebf8a655b
-# ╠═4b9844c9-dc74-47f0-b710-9e7125767f46
-# ╠═4c3b723e-2edc-4ce0-a19b-fa9fb626fa9c
-# ╠═015792a1-975f-4f3a-aca3-c4a7c5076f2f
-# ╠═3e5a3995-2076-437a-80d9-e7cfc59d8d21
-# ╠═550bb359-ccbf-4250-8790-2524e7444489
-# ╠═188ecae8-0b84-4885-bdc0-897171565884
-# ╠═f74656de-ac2a-47aa-b128-cb0e989d71d7
-# ╠═09b311fc-54d6-42b7-9b5a-2f076e06bc1d
-# ╠═8106ba0b-49c5-4244-a398-e2e304c9c554
-# ╟─47ae5cdb-e35a-4ef3-93d4-17acd6b83c49
-# ╠═96ce7d9c-bd49-4f82-a5df-004ef4fc96d9
-# ╠═a1bc6ccc-c955-45f4-8a86-5953296ce1fc
-# ╠═67ec72c6-7674-4e09-9efa-754ab7d331ad
-# ╠═ebda1530-72b6-4e90-a108-9f73c8780207
-# ╠═05b0c9c6-5ad7-4ae5-a9ac-195d0e988ebb
-# ╟─5e70ae19-4dd1-46f4-8d5b-32198932ea40
-# ╠═74678d76-976e-40e0-adf4-3083dacebb6c
-# ╠═672db5ec-f52d-427d-9a3b-be758ffc7d73
-# ╠═fbe90769-106a-4bad-b0ff-22881ae28668
-# ╠═7a7e854c-e8b2-4e42-a821-6825dee99f7b
-# ╠═6badd695-fd44-4c6e-b3b8-eb4a007007b8
-# ╠═afcbe6f7-14fa-43d5-bb0a-e649cc82f6c1
+# ╟─194cb60f-76e7-491c-8498-b9ba096fd790
+# ╟─6deb218c-aaf3-4526-877e-259cde09a387
+# ╠═88e4e35f-4d6e-448f-8c3e-d841ac6b3d9f
+# ╠═92cbd27c-1751-454e-9ae8-aaee77cfe6ab
+# ╠═77985a5e-88e1-4e83-bae0-7dd95023b3b4
+# ╟─8b638aa8-3f29-4b57-9179-ea030bb4308e
+# ╟─92caec94-f70c-473d-a602-6d646dd9bd01
+# ╠═5ad290ca-37be-4bc9-9b9e-0ae348092bcb
+# ╠═ba7c3dcf-5fd6-4e9e-a2ab-ec798080402b
+# ╠═8b71c74e-838f-4e02-bf9f-fb74d1dfc5f1
+# ╠═c255e517-6f87-4068-a752-a9695634b0ea
+# ╠═5c2680fa-56d7-47da-8540-093e9653bf7f
+# ╠═cc16a21e-8771-4176-937b-389780f56bbd
+# ╟─679fb815-d330-48dd-9464-9c29a79663e1
+# ╠═9c164d07-d558-4d2e-88c5-c99f5c83f386
+# ╠═9f5ecae7-1cb8-402e-9dad-a99c98319794
+# ╠═ea7f7ea9-af24-4f2e-8ad9-a636f55c1a0a
+# ╠═21f6edd1-6447-450c-9a45-481cb0745289
+# ╟─1d1d1488-1a3d-4eeb-ad30-88587c484a53
+# ╠═1bfe499a-3948-4438-9f8a-447622904b73
+# ╠═933ce89e-1f9e-4ce8-8917-aca567625c90
+# ╠═bfc5aa39-5393-4635-8bdb-10ec7ddf009f
+# ╠═a4d24ac7-189d-4975-ac94-9005cb4930ec
+# ╠═aeefd8da-318e-464b-ac7d-fa9965a850ec
+# ╟─2852eeca-a796-4574-99ff-f7c922c84862
+# ╟─0ff04c27-e672-4659-9855-2b50032e3521
+# ╟─9aa3d6b8-5502-4ef6-97d9-f5cbec0c50ca
+# ╟─c697bb88-65cb-4842-84cd-c66d41c59341
+# ╟─a9e63186-731b-4264-a6c2-34578c4d5a99
 # ╟─8cbeb34d-53a0-4677-982a-349641269559
 # ╟─b59287dc-5271-492b-82ad-23e726442a54
 # ╟─b2a15aa0-b2cb-4a4d-a612-4cbd3ee6a5f3
 # ╟─e6e7e24e-ff66-47ac-bbfb-63d9059dcf7a
+# ╟─e2d34d5c-1298-483e-b7fe-fe2d21a385fc
 # ╟─24cb813e-af85-435f-9c43-db38e8eaa1d2
 # ╟─8759b216-cc38-42ed-b85c-04d508579c54
-# ╠═1c640715-9bef-4935-9dce-f94ff2a3740b
-# ╟─080d3a94-161e-4482-9cf4-b82ffb98d0ed
+# ╟─1c640715-9bef-4935-9dce-f94ff2a3740b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
